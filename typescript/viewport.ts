@@ -14,6 +14,7 @@ export class Viewport {
     positionBuffer: WebGLBuffer;
     tileset: WebGLTexture;
     tilesetUniformLocation: WebGLUniformLocation;
+    indexBuffer: WebGLBuffer;
 
     constructor(viewportCanvas: HTMLCanvasElement) {
         viewportCanvas.width = VIEWPORT_WIDTH;
@@ -25,15 +26,16 @@ export class Viewport {
         this.gl.viewport(0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
         this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
-        let position = [
-            -1, -1,
-            1, 1,
-            -1, 1
-        ]
+        let position = [-1, -1, 1, 1, -1, 1, 1, -1]
         this.positionAttribLocation = this.gl.getAttribLocation(this.program, "a_position");
         this.positionBuffer = <WebGLBuffer>this.gl.createBuffer();
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.positionBuffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(position), this.gl.STATIC_DRAW);
+
+        let indices = [0, 1, 2, 0, 3, 2];
+        this.indexBuffer = <WebGLBuffer>this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+        this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), this.gl.STATIC_DRAW);
 
         this.gl.useProgram(this.program);
         let resolutionUniformLocation = <WebGLUniformLocation>this.gl.getUniformLocation(this.program, 'u_resolution');
@@ -51,12 +53,14 @@ export class Viewport {
         this.gl.enableVertexAttribArray(this.positionAttribLocation);
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.positionBuffer)
         this.gl.vertexAttribPointer(this.positionAttribLocation, 2, this.gl.FLOAT, false, 0, 0);
- 
+
         this.gl.activeTexture(this.gl.TEXTURE0);
         this.gl.bindTexture(this.gl.TEXTURE_2D, this.tileset);
         this.gl.uniform1i(this.tilesetUniformLocation, 0)
- 
-        this.gl.drawArrays(this.gl.TRIANGLES, 0, 3);
+
+        // this.gl.drawArrays(this.gl.TRIANGLES, 0, 3);
+        this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer)
+        this.gl.drawElements(this.gl.TRIANGLES, 6, this.gl.UNSIGNED_SHORT, 0);
     }
 }
 
