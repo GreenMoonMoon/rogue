@@ -1,0 +1,15 @@
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+    grid-template-areas: ". viewport-tab ." ". viewport-tab ." ". . ." ". . .";
+}
+  
+.viewport-tab {
+    grid-area: viewport-tab;
+}
+
+#viewport-canvas {
+    width: 320;
+    height: 320;
+}
