@@ -1,1 +1,3 @@
-src/main.js
+src/*.js
+src/*.js.map
+.vscode/*

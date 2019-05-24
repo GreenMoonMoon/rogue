@@ -6,7 +6,30 @@
     <title>Document</title>
 </head>
 <body>
-    
+    <div id="content">
+        <div id="viewport">
+            <canvas id="viewport-canvas"></canvas>
+        </div>
+    </div>
+
+    <script type="glsl" id="vertex-shader">
+precision mediump float;
+
+attribute vec2 a_position;
+
+void main(){
+    gl_Position = vec4(a_position, 0.0, 1.0);
+}
+    </script>
+    <script type="glsl" id="fragment-shader">
+precision mediump float;
+
+uniform vec2 u_resolution;
+
+void main(){
+    gl_FragColor = vec4((gl_FragCoord.xy / u_resolution), 0.0, 1.0);
+}
+    </script>
     <script type="module" src="src/main.js"></script>
 </body>
 </html>

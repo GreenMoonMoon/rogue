@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "strict": true,
+        "noImplicitAny": true,
+        "removeComments": true,
+        "sourceMap": true,
+        "outDir": "./src",
+    },
+    "include": [
+        "typescript/**/*"
+    ]
+}
