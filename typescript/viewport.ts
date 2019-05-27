@@ -26,13 +26,13 @@ export class Viewport {
         this.gl.viewport(0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
         this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
-        let position = [-1, -1, 1, 1, -1, 1, 1, -1]
+        let position = [-1, -1, -1, 1, 1, 1, 1, -1]
         this.positionAttribLocation = this.gl.getAttribLocation(this.program, "a_position");
         this.positionBuffer = <WebGLBuffer>this.gl.createBuffer();
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.positionBuffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(position), this.gl.STATIC_DRAW);
 
-        let indices = [0, 1, 2, 0, 3, 2];
+        let indices = [0, 2, 1, 0, 3, 2];
         this.indexBuffer = <WebGLBuffer>this.gl.createBuffer();
         this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
         this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), this.gl.STATIC_DRAW);
@@ -45,7 +45,8 @@ export class Viewport {
         this.tilesetUniformLocation = <WebGLUniformLocation>this.gl.getUniformLocation(this.program, 'u_tileset');
     }
 
-    update() { }
+    update(view: number[]) {
+    }
 
     draw() {
         this.gl.clear(this.gl.COLOR_BUFFER_BIT);
