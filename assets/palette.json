@@ -1,0 +1,14 @@
+{
+    "background": 0,
+    "colors-value": [
+        {"hex":"#472d3c", "rgb": [71, 45, 60]},
+        {"hex": "#cfc6b8", "rgb": [207, 198, 184]},
+        {"hex": "#7a444a", "rgb": [122, 68, 74]},
+        {"hex": "#38d973", "rgb": [56, 217, 115]},
+        {"hex": "#bf7958", "rgb": [191, 121, 88]},
+        {"hex": "#3cacd7", "rgb": [60, 172, 215]},
+        {"hex": "#e6482e", "rgb": [230, 72, 46]},
+        {"hex": "#f4b41b", "rgb": [244, 180, 27]}
+    ],
+    "colors-name": ["black", "white", "brown", "green", "lightbrown", "blue", "red", "yellow"]
+}
