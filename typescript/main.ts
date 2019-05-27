@@ -4,22 +4,22 @@ let viewport: Viewport;
 let game;
 let simluation;
 
-function launchGame(){
+function launchGame() {
     console.log("Launch Game");
 }
 
-function launchSimulation(){
+function launchSimulation() {
     console.log("Launch Simulation");
 }
 
-function launchViewport(){
+function launchViewport() {
     let viewportCanvas = <HTMLCanvasElement>document.getElementById("viewport-canvas");
     viewport = new Viewport(viewportCanvas);
     console.log("Launch viewport");
     viewport.draw();
 }
 
-function updateViewport(){
+function updateViewport() {
     viewport.update([
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -35,6 +35,6 @@ function updateViewport(){
     viewport.draw();
 }
 
-launchGame();
-launchSimulation();
-launchViewport();
+// launchGame();
+// launchSimulation();
+// launchViewport();
