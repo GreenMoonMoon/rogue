@@ -1,3 +1,7 @@
+body {
+    background-color: #472d3c;
+}
+
 .grid-container {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -7,9 +11,12 @@
   
 .viewport-tab {
     grid-area: viewport-tab;
+    border-width: 2px;
+    border-color: #cfc6b8;
+    border-style: solid;
 }
 
 #viewport-canvas {
     width: 320;
     height: 320;
-}
+} 
