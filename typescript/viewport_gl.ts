@@ -1,6 +1,7 @@
 
 const VIEWPORT_WIDTH = 160;
 const VIEWPORT_HEIGHT = 160;
+const MAP_SIZE = 10;
 
 interface ShaderSources {
     vertex: string;
@@ -15,6 +16,8 @@ export class Viewport {
     tileset: WebGLTexture;
     tilesetUniformLocation: WebGLUniformLocation;
     indexBuffer: WebGLBuffer;
+    map: WebGLTexture;
+    mapUniformLocation: WebGLUniformLocation;
 
     constructor(viewportCanvas: HTMLCanvasElement) {
         viewportCanvas.width = VIEWPORT_WIDTH;
@@ -43,9 +46,32 @@ export class Viewport {
 
         this.tileset = loadTileset(this.gl, 'monochrome');
         this.tilesetUniformLocation = <WebGLUniformLocation>this.gl.getUniformLocation(this.program, 'u_tileset');
+
+        this.map = <WebGLTexture>this.gl.createTexture();
+        this.mapUniformLocation = <WebGLUniformLocation>this.gl.getUniformLocation(this.program, "u_map");
     }
 
-    update(view: number[]) {
+    update(view: number[][]) {
+        let mapData = <number[]>[];
+
+        for (let y = 0; y < MAP_SIZE; y++) {
+            for (let x = 0; x < MAP_SIZE; x++) {
+                mapData[y * MAP_SIZE + x] = view[y][x];
+            }
+        }
+
+        this.gl.bindTexture(this.gl.TEXTURE_2D, this.map);
+        this.gl.texImage2D(
+            this.gl.TEXTURE_2D,
+            1,
+            10,
+            10,
+            0,
+            this.gl.RGB,
+            this.gl.RGB,
+            this.gl.UNSIGNED_BYTE,
+            new Uint8Array(mapData)
+        );
     }
 
     draw() {
@@ -58,6 +84,10 @@ export class Viewport {
         this.gl.activeTexture(this.gl.TEXTURE0);
         this.gl.bindTexture(this.gl.TEXTURE_2D, this.tileset);
         this.gl.uniform1i(this.tilesetUniformLocation, 0)
+
+        this.gl.activeTexture(this.gl.TEXTURE1);
+        this.gl.bindTexture(this.gl.TEXTURE_2D, this.map);
+        this.gl.uniform1i(this.mapUniformLocation, 1);
 
         // this.gl.drawArrays(this.gl.TRIANGLES, 0, 3);
         this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer)
