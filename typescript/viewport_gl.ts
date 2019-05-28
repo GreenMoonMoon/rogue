@@ -44,9 +44,13 @@ export class Viewport {
         let resolutionUniformLocation = <WebGLUniformLocation>this.gl.getUniformLocation(this.program, 'u_resolution');
         this.gl.uniform2fv(resolutionUniformLocation, [VIEWPORT_WIDTH, VIEWPORT_HEIGHT]);
 
-        this.tileset = loadTileset(this.gl, 'monochrome');
-        this.tilesetUniformLocation = <WebGLUniformLocation>this.gl.getUniformLocation(this.program, 'u_tileset');
 
+        let tilesetImage = <HTMLImageElement>document.getElementById("tileset")
+        this.tilesetUniformLocation = <WebGLUniformLocation>this.gl.getUniformLocation(this.program, 'u_tileset');
+        this.tileset = <WebGLTexture>this.gl.createTexture();
+        this.gl.bindTexture(this.gl.TEXTURE_2D, this.tileset);
+        this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, tilesetImage);
+        
         this.map = <WebGLTexture>this.gl.createTexture();
         this.mapUniformLocation = <WebGLUniformLocation>this.gl.getUniformLocation(this.program, "u_map");
     }
@@ -85,9 +89,9 @@ export class Viewport {
         this.gl.bindTexture(this.gl.TEXTURE_2D, this.tileset);
         this.gl.uniform1i(this.tilesetUniformLocation, 0)
 
-        this.gl.activeTexture(this.gl.TEXTURE1);
-        this.gl.bindTexture(this.gl.TEXTURE_2D, this.map);
-        this.gl.uniform1i(this.mapUniformLocation, 1);
+        // this.gl.activeTexture(this.gl.TEXTURE1);
+        // this.gl.bindTexture(this.gl.TEXTURE_2D, this.map);
+        // this.gl.uniform1i(this.mapUniformLocation, 1);
 
         // this.gl.drawArrays(this.gl.TRIANGLES, 0, 3);
         this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer)
@@ -136,35 +140,35 @@ function getShaderSources(name: string): ShaderSources {
     }
 }
 
-function loadTileset(gl: WebGLRenderingContext, name: string): WebGLTexture {
-    // let url = `assets/tilesheet/${name}.png`;
-    let url = "assets/tilesheet/monochrome.png";
+// function loadTileset(gl: WebGLRenderingContext, name: string): WebGLTexture {
+//     // let url = `assets/tilesheet/${name}.png`;
+//     let url = "assets/tilesheet/monochrome.png";
 
-    let tilesetTexture = <WebGLTexture>gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, tilesetTexture);
+//     var tilesetTexture = <WebGLTexture>gl.createTexture();
+//     gl.bindTexture(gl.TEXTURE_2D, tilesetTexture);
 
-    // Temporary 1 pixel texture.
-    gl.texImage2D(
-        gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
-        new Uint8Array([255, 0, 255, 255])
-    )
+//     // Temporary 1 pixel texture.
+//     gl.texImage2D(
+//         gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
+//         new Uint8Array([255, 0, 255, 255])
+//     )
 
-    var tilesetImage = new Image();
-    // tilesetImage.crossOrigin = "anonymous";
-    tilesetImage.src = url;
-    tilesetImage.onload = function () {
-        console.log('Texture onload');
-        gl.bindTexture(gl.TEXTURE_2D, tilesetTexture);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, tilesetImage);
+//     var tilesetImage = new Image();
+//     // tilesetImage.crossOrigin = "anonymous";
+//     tilesetImage.src = url;
+//     tilesetImage.onload = function () {
+//         console.log('Texture onload');
+//         gl.bindTexture(gl.TEXTURE_2D, tilesetTexture);
+//         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, tilesetImage);
 
-        // // if the image is a power of 2 on both sides
-        // gl.generateMipmap(gl.TEXTURE_2D)
+//         // // if the image is a power of 2 on both sides
+//         // gl.generateMipmap(gl.TEXTURE_2D)
 
-        // if the image is NOT a power of 2
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    }
+//         // if the image is NOT a power of 2
+//         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+//         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+//         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+//     }
 
-    return tilesetTexture;
-}
+//     return tilesetTexture;
+// }

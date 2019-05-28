@@ -10,34 +10,14 @@
 <body>
     <div class="grid-container">
         <div class="viewport-tab">
-            <canvas id="viewport-canvas"></canvas>
+            <canvas id="canvas"></canvas>
         </div>
     </div>
+    <script type="glsl" id="vertex-shader" src="src/shaders/default.vert"></script>
+    <script type="glsl" id="fragment-shader" src="src/shaders/default.frag"></script>
 
-    <script type="glsl" id="vertex-shader">
-precision mediump float;
-
-attribute vec2 a_position;
-
-void main(){
-    gl_Position = vec4(a_position, 0.0, 1.0);
-}
-    </script>
-    <script type="glsl" id="fragment-shader">
-precision mediump float;
-
-uniform vec2 u_resolution;
-uniform sampler2D u_tileset;
-
-void main(){
-    vec2 texCoord = vec2(fract(gl_FragCoord.xy / 16.0) + vec2(17.0));
-    vec4 color = texture2D(u_tileset, texCoord);
-
-    // gl_FragColor = vec4((gl_FragCoord.xy / u_resolution), 0.0, 1.0);
-    gl_FragColor = color;
-}
-    </script>
     <script type="module" src="src/main.js"></script>
+
 </body>
 
 </html>
