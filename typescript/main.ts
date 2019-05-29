@@ -4,7 +4,6 @@ import { Game } from "./game.js";
 
 const viewport = new Viewport(<HTMLCanvasElement>document.getElementById('canvas'));
 const game = new Game();
-var simluation;
 
 function launchGame() {
     console.log("Launch Game");
@@ -38,3 +37,4 @@ game.runSteps()
 let map = game.mapRect(0, 0, 10, 10);
 viewport.draw(map);
 // ==============
+

@@ -1,0 +1,42 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Tile Selector</title>
+    <style>
+        #tileset {
+            width: 1086;
+            height: 1086;
+            image-rendering: pixelated;
+        }
+        #id-box {
+            width: 100px;
+            height: 35px;
+            background-color: #472d3c;
+            color: #cfc6b8;
+            border-radius: 10px;
+            font-family: Arial, Helvetica, sans-serif;
+            text-align: center;
+            display: block;
+            float: right;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <img src="/assets/tilesheet/colored.png" id="tileset">
+        <div id="id-box"></div>
+    </div>
+    <script>
+        function getClickCoordinate(e) {
+            let img = document.getElementById("tileset");
+            let coord = {x: e.clientX - img.offsetLeft, y: e.clientY - img.offsetTop};
+            let idBox = document.getElementById("id-box");
+            idBox.innerHTML = Math.floor(coord.x / 34) + (Math.floor(coord.y / 34) * 32);
+        } 
+
+        window.addEventListener("mousedown", getClickCoordinate);
+    </script>
+</body>
+</html>

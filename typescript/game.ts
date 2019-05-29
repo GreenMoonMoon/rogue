@@ -3,23 +3,27 @@ import { point } from "./utils";
 let player: GameObject;
 let gameObjects: GameObject[];
 
-class GameObject{
+class GameObject {
     tileID: number;
     coordinate: point
-    constructor(tileID: number){
+    constructor(tileID: number) {
         this.tileID = tileID
-        this.coordinate = {x: 0, y: 0}
+        this.coordinate = { x: 0, y: 0 }
     }
 }
 
-export class Game{
-    constructor(){}
+export class Game {
+    constructor() { }
 
-    runSteps(){
-        
+    runSteps() {
+
     }
 
-    mapRect(x: number, y: number, w: number, h: number): number[][]{
+    mapRect(x: number, y: number, w: number, h: number): number[][] {
         return [];
     }
+}
+
+export class Controller {
+    constructor() { }
 }
