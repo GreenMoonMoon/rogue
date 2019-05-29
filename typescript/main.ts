@@ -1,8 +1,9 @@
 // import { Viewport } from "./viewport_gl.js";
 import { Viewport } from "./viewport_2d.js"
+import { Game } from "./game.js";
 
 const viewport = new Viewport(<HTMLCanvasElement>document.getElementById('canvas'));
-var game;
+const game = new Game();
 var simluation;
 
 function launchGame() {
@@ -13,15 +14,9 @@ function launchSimulation() {
     console.log("Launch Simulation");
 }
 
-// function launchViewport() {
-//     let viewportCanvas = <HTMLCanvasElement>document.getElementById("canvas");
-//     viewport = new Viewport(viewportCanvas);
-//     viewport.draw();
-// }
-
 function updateViewport() {
     console.log('event triggered');
-    viewport.update([
+    let map = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 7, 0, 0, 0, 0],
@@ -32,13 +27,14 @@ function updateViewport() {
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 23, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    ]);
-    viewport.draw();
+    ];
+    viewport.draw(map);
 }
 
-// launchGame();
-// launchSimulation();
-// launchViewport();
-
-// updateViewport();
 window.addEventListener("keydown", (event: KeyboardEvent) => updateViewport())
+game.runSteps()
+
+// ==============
+let map = game.mapRect(0, 0, 10, 10);
+viewport.draw(map);
+// ==============
