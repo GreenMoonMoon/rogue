@@ -31,9 +31,10 @@ function updateViewport() {
 }
 
 window.addEventListener("keydown", (event: KeyboardEvent) => updateViewport())
-game.runSteps()
 
 // ==============
+game.updatePlayer(id=27);
+// game.runSteps()
 let map = game.mapRect(0, 0, 10, 10);
 viewport.draw(map);
 // ==============

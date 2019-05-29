@@ -22,6 +22,12 @@ export class Game {
     mapRect(x: number, y: number, w: number, h: number): number[][] {
         return [];
     }
+
+    udpateCharacter(tileID?: number){
+        if(tileID){
+            player.tileID = tileID
+        }
+    }
 }
 
 export class Controller {
