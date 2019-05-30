@@ -14,6 +14,7 @@ body {
     border-width: 2px;
     border-color: #cfc6b8;
     border-style: solid;
+    width: 320px;
 }
 
 #viewport-canvas {
