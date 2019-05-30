@@ -38,11 +38,13 @@ export class Game {
             }
         }
         for (let go of gameObjects) {
+            // NOTES: check if object intersect with mapRect first.
             m[go.coordinate.x - x][go.coordinate.y - y] = go.tileID;
         }
         return m;
     }
 
+    // Empty function for overriding
     update() { }
 
     forceUpdate(){
