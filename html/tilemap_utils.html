@@ -29,12 +29,29 @@
     </div>
 
     <script>
-        function loadImg(event){
-            console.log(event);
+        const image_names = [
+            "colored_transparent",
+            "colored",
+            "monochrome_transparent",
+            "monochrome"
+        ]
+        var images = [];
+
+        function loadImages(){
+            for(name of image_names){
+                let img = new Image();
+                img.src = `assets/tilesheet/${name}.png`;
+                images.push(img);
+            }
         }
 
-        let fileInput = document.getElementById("image-url");
-        fileInput.addEventListener("change", (event) => loadImg(event));
+        function initImageSelection(){
+
+        }
+
+        loadImages();
+        initImageSelection();
+        
     </script>
 </body>
 

@@ -14,7 +14,7 @@ function updateViewport() {
 game.update = () => updateViewport();
 
 game.addObject({name: "chest", coordinate:{x:5, y:5}, tileID: 200});
-game.addObject({name: "key", coordinate:{x:5, y:7}, tileID: 240});
+game.addObject({name: "key", coordinate:{x:5, y:7}, tileID: 752});
 
 updateViewport();
 game.loop();

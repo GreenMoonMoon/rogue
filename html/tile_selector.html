@@ -6,8 +6,8 @@
     <title>Tile Selector</title>
     <style>
         #tileset {
-            width: 1086;
-            height: 1086;
+            width: 543;
+            height: 543;
             image-rendering: pixelated;
         }
         #id-box {
@@ -33,7 +33,7 @@
             let img = document.getElementById("tileset");
             let coord = {x: e.clientX - img.offsetLeft, y: e.clientY - img.offsetTop};
             let idBox = document.getElementById("id-box");
-            idBox.innerHTML = Math.floor(coord.x / 34) + (Math.floor(coord.y / 34) * 32);
+            idBox.innerHTML = Math.floor(coord.x / 17) + (Math.floor(coord.y / 17) * 32);
         } 
 
         window.addEventListener("mousedown", getClickCoordinate);
