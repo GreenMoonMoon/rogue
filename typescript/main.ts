@@ -1,6 +1,7 @@
 // import { Viewport } from "./viewport_gl.js";
 import { Viewport } from "./viewport_2d.js"
-import { Game, Controller } from "./game.js";
+import { Game, Controller, GameObject } from "./game.js";
+import { point } from "./utils";
 
 const viewport = new Viewport(<HTMLCanvasElement>document.getElementById('canvas'));
 const game = new Game();
@@ -13,8 +14,8 @@ function updateViewport() {
 
 game.update = () => updateViewport();
 
-game.addObject({name: "chest", coordinate:{x:5, y:5}, tileID: 200});
-game.addObject({name: "key", coordinate:{x:5, y:7}, tileID: 752});
+game.addObject(new GameObject("chest", 200, <point>{x:5, y:5}, [], ['pickable']));
+game.addObject(new GameObject("key", 752, <point>{x:5, y:7}, [], ['interactable', 'obstacle']));
 
 updateViewport();
 game.loop();

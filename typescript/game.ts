@@ -1,28 +1,66 @@
 import { point } from "./utils";
 
+let game: Game;
+
 let gameObjects: GameObject[];
 let player: GameObject;
-let map: number[][];
+let map: Cell[][];
 let needUpdate = false;
 
-class GameObject {
-    name: string;
-    tileID: number;
-    coordinate: point;
-    constructor(name: string, tileID: number) {
-        this.name = name;
-        this.tileID = tileID;
-        this.coordinate = { x: 0, y: 0 };
-    }
+interface Command {
+    type: string;
+    obj: GameObject;
+    args: any[];
+}
 
-    move(x: number, y: number) {
-        this.coordinate.x += x;
-        this.coordinate.y += y;
+class Cell{
+    tileID: number;
+    obstacle: boolean;
+    content: GameObject[];
+    constructor(tileID: number = 0, obstacle: boolean = false, content: GameObject[] = []){
+        this.tileID = tileID;
+        this.obstacle = obstacle;
+        this.content = content;
     }
 }
 
+// GameObject are the basis for all object contained in the game. GameObject
+// instance should be viewed as interactive objects that aren't passive 
+// ressources.
+// They have behavior, can move, have inventories of other game objects.
+export class GameObject {
+    name: string;
+    tileID: number;
+    coordinate: point;
+    
+    inventory: GameObject[]
+    attributes: string[] // Simple setup, could be replace with something more scalable and abstract.
+
+    constructor(name: string, tileID: number, coordinate: point = <point>{x:0, y:0}, inventory: GameObject[] = [], attributes: string[] = []) {
+        this.name = name;
+        this.tileID = tileID;
+        this.coordinate = coordinate;
+        this.inventory = inventory;
+        this.attributes = attributes;
+    }
+
+    move(x: number, y: number) {
+        game.addCommand(<Command>{type:'Move', obj: this, args:[{x: this.coordinate.x + x, y: this.coordinate.y + y}]})
+    }
+
+    interact(obj: GameObject) {}
+}
+
 export class Game {
+    commands: Command[];
+
     constructor() {
+        this.commands = [];
+
+        if(!game){
+            game = this;
+        }
+
         gameObjects = [];
         player = new GameObject("hero", 27);
         gameObjects.push(player);
@@ -34,7 +72,7 @@ export class Game {
         for(let i = 0; i < h; i++){
             m[i] = [];
             for(let j = 0; j < w; j++){
-                m[i][j] = map[i + y][j + x];
+                m[i][j] = map[i + y][j + x].tileID;
             }
         }
         for (let go of gameObjects) {
@@ -54,14 +92,47 @@ export class Game {
     loop(){
         window.requestAnimationFrame(() => this.loop())
         if (needUpdate){
+            this.executeCommands();
             this.update();
             needUpdate = false;
         }
     }
 
-    addObject(gameObject: {}){
-        // Is this acceptable? I doupt it. Maybe I should expose the GameObject class.
-        gameObjects.push(<GameObject>gameObject);
+    addObject(gameObject: GameObject){
+        gameObjects.push(gameObject);
+
+        let coord = <point>gameObject.coordinate;
+        map[coord.x][coord.y].content.push(gameObject);
+    }
+
+    addCommand(command: Command){
+        this.commands.push(command);
+    }
+
+    private executeCommands(){
+        while(this.commands.length > 0){
+            let command = <Command>this.commands.pop();
+            switch(command.type){
+                case 'Move':
+                    let coord = <point>command.args.pop();
+                    let cellContent = map[coord.y][coord.x].content
+                    for(let content of cellContent){
+                        if(content.attributes.indexOf('obstacle') >= 0){
+                            break;
+                        }
+                        if(content.attributes.indexOf('pickable') >= 0){
+                            command.obj.inventory.push(content);
+                            cellContent.splice(cellContent.indexOf(content, 1));
+                            gameObjects.splice(cellContent.indexOf(content, 1));
+                        }
+                        if(content.attributes.indexOf('interactable') >= 0){
+                            content.interact(command.obj);
+                        }
+                    }
+                    command.obj.coordinate = coord;
+                    break;
+            }
+        }
     }
 }
 
@@ -90,7 +161,8 @@ export class Controller {
 }
 
 function initMap() {
-    map = [
+    map = [];
+    let mapTileIDs = [
         [52, 5, 0, 0, 0, 0, 6, 0, 0, 50],
         [52, 5, 0, 0, 0, 0, 6, 0, 0, 50],
         [52, 0, 6, 0, 0, 5, 0, 0, 5, 50],
@@ -102,4 +174,11 @@ function initMap() {
         [52, 0, 0, 0, 6, 0, 0, 6, 0, 50],
         [146, 19, 19, 19, 19, 19, 19, 19, 19, 147]
     ];
+    for(let r = 0; r < mapTileIDs.length; r++){
+        map[r] = [];
+        let row = mapTileIDs[r];
+        for(let i = 0; i < row.length; i++){
+            map[r][i] = new Cell(row[i]);
+        }
+    }
 }
