@@ -1,14 +1,177 @@
 {
-    "background": 0,
-    "colors-value": [
-        {"hex":"#472d3c", "rgb": [71, 45, 60]},
-        {"hex": "#cfc6b8", "rgb": [207, 198, 184]},
-        {"hex": "#7a444a", "rgb": [122, 68, 74]},
-        {"hex": "#38d973", "rgb": [56, 217, 115]},
-        {"hex": "#bf7958", "rgb": [191, 121, 88]},
-        {"hex": "#3cacd7", "rgb": [60, 172, 215]},
-        {"hex": "#e6482e", "rgb": [230, 72, 46]},
-        {"hex": "#f4b41b", "rgb": [244, 180, 27]}
-    ],
-    "colors-name": ["black", "white", "brown", "green", "lightbrown", "blue", "red", "yellow"]
+    "default": {
+        "size": 8,
+        "hex": [
+            "#472d3c",
+            "#cfc6b8",
+            "#7a444a",
+            "#38d973",
+            "#bf7958",
+            "#3cacd7",
+            "#e6482e",
+            "#f4b41b"
+        ],
+        "rgb":[
+            "71 45 60",
+            "207 198 184",
+            "122 68 74",
+            "56 217 115",
+            "191 121 88",
+            "60 172 215",
+            "230 72 46",
+            "244 180 27"
+        ],
+        "names": ["black", "white", "brown", "green", "lightbrown", "blue", "red", "yellow"],
+        "background": 0
+    },
+    "default16": {
+        "size": 16,
+        "hex": [
+            "#472d3c",
+            "#cfc6b8",
+            "#7a444a",
+            "#38d973",
+            "#bf7958",
+            "#3cacd7",
+            "#e6482e",
+            "#f4b41b",
+            "#5d3c4f",
+            "#867e71",
+            "#313562",
+            "#348250",
+            "#8c2413",
+            "#a161a5",
+            "#0e618c",
+            "#eee169"
+        ],
+        "background": 0
+    },
+    "MATRIAX8C": {
+        "size": 8,
+        "hex": [
+            "#F0F0DC",
+            "#FAC800",
+            "#10C840",
+            "#00A0C8",
+            "#D24040",
+            "#A0694B",
+            "#736464",
+            "#101820"
+        ],
+        "names": ["white", "yellow", "green", "blue", "red", "brown", "grey", "black"],
+        "background": 8,
+        "source": "https://lospec.com/palette-list/matriax8c"
+    },
+    "JMP":{
+        "size": 16,
+        "hex" :[
+            "000000",
+            "191028",
+            "46af45",
+            "a1d685",
+            "453e78",
+            "7664fe",
+            "833129",
+            "9ec2e8",
+            "dc534b",
+            "e18d79",
+            "d6b97b",
+            "e9d8a1",
+            "216c4b",
+            "d365c8",
+            "afaab9",
+            "f5f4eb"
+        ],
+        "rgb": [
+            "0 0 0",
+            "25 16 40",
+            "70 175 69",
+            "161 214 133",
+            "69 62 120",
+            "118 100 254",
+            "131 49 41",
+            "158 194 232",
+            "220 83 75",
+            "225 141 121",
+            "214 185 123",
+            "233 216 161",
+            "33 108 75",
+            "211 101 200",
+            "175 170 185",
+            "245 244 235"
+        ],
+        "names": ["black", "darkgrey", "green", "lightgreen", "darkblue", "blue", "brown", "lightblue", "red", "lightred", "darkyellow", "yellow", "darkgreen", "pink", "lightgrey", "white"],
+        "background": 0,
+        "source": "https://lospec.com/palette-list/jmp-japanese-machine-palette"
+    },
+    "NA16": {
+        "size": 16,
+        "hex": [
+            "#8c8fae",
+            "#584563",
+            "#3e2137",
+            "#9a6348",
+            "#d79b7d",
+            "#f5edba",
+            "#c0c741",
+            "#647d34",
+            "#e4943a",
+            "#9d303b",
+            "#d26471",
+            "#70377f",
+            "#7ec4c1",
+            "#34859d",
+            "#17434b",
+            "#1f0e1c"
+        ],
+        "name": ["lightgrey", "lightpurple", "darkpurple", "brown", "lightbrown", "white", "lightgreen", "green", "yellow", "red", "lightred", "purple", "lightblue", "blue", "darkblue", "black"],
+        "background": 15,
+        "source": "https://lospec.com/palette-list/na16"
+    },
+    "PICO-8": {
+        "size": 16,
+        "hex": [
+            "#000000",
+            "#5F574F",
+            "#C2C3C7",
+            "#FFF1E8",
+            "#FFEC27",
+            "#FFA300",
+            "#FFCCAA",
+            "#AB5236",
+            "#FF77A8",
+            "#FF004D",
+            "#83769C",
+            "#7E2553",
+            "#29ADFF",
+            "#1D2B53",
+            "#008751",
+            "#00E436"
+        ],
+        "background": 0,
+        "source": "https://lospec.com/palette-list/pico-8"
+    },
+    "ENDEGA SOFT": {
+        "size": 16,
+        "hex": [
+            "#fefed7",
+            "#dbbc96",
+            "#ddac46",
+            "#c25940",
+            "#683d64",
+            "#9c6659",
+            "#88434f",
+            "#4d2831",
+            "#a9aba3",
+            "#666869",
+            "#51b1ca",
+            "#1773b8",
+            "#639f5b",
+            "#376e49",
+            "#323441",
+            "#161323"
+        ],
+        "background": 15,
+        "source": "https://lospec.com/palette-list/endesga-soft-16"
+    }
 }

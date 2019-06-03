@@ -1,0 +1,15 @@
+{
+    "chest":{
+        "tileID":200,
+        "attributes": [
+            "obstacle",
+            "interactable"
+        ]
+    },
+    "key":{
+        "tileID": 752,
+        "attributes": [
+            "pickable"
+        ]
+    }
+}

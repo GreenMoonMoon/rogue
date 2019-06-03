@@ -6,6 +6,7 @@ let gameObjects: GameObject[];
 let player: GameObject;
 let map: Cell[][];
 let needUpdate = false;
+let maps: Map[];
 
 interface Command {
     type: string;
@@ -13,11 +14,16 @@ interface Command {
     args: any[];
 }
 
-class Cell{
+interface Map {
+    name: string;
+    cells: Cell[][];
+}
+
+class Cell {
     tileID: number;
     obstacle: boolean;
     content: GameObject[];
-    constructor(tileID: number = 0, obstacle: boolean = false, content: GameObject[] = []){
+    constructor(tileID: number = 0, obstacle: boolean = false, content: GameObject[] = []) {
         this.tileID = tileID;
         this.obstacle = obstacle;
         this.content = content;
@@ -28,15 +34,15 @@ class Cell{
 // instance should be viewed as interactive objects that aren't passive 
 // ressources.
 // They have behavior, can move, have inventories of other game objects.
-export class GameObject {
+class GameObject {
     name: string;
     tileID: number;
     coordinate: point;
-    
+
     inventory: GameObject[]
     attributes: string[] // Simple setup, could be replace with something more scalable and abstract.
 
-    constructor(name: string, tileID: number, coordinate: point = <point>{x:0, y:0}, inventory: GameObject[] = [], attributes: string[] = []) {
+    constructor(name: string, tileID: number, coordinate: point = <point>{ x: 0, y: 0 }, inventory: GameObject[] = [], attributes: string[] = []) {
         this.name = name;
         this.tileID = tileID;
         this.coordinate = coordinate;
@@ -45,10 +51,10 @@ export class GameObject {
     }
 
     move(x: number, y: number) {
-        game.addCommand(<Command>{type:'Move', obj: this, args:[{x: this.coordinate.x + x, y: this.coordinate.y + y}]})
+        game.addCommand(<Command>{ type: 'Move', obj: this, args: [{ x: this.coordinate.x + x, y: this.coordinate.y + y }] })
     }
 
-    interact(obj: GameObject) {}
+    interact(obj: GameObject) { }
 }
 
 export class Game {
@@ -57,21 +63,66 @@ export class Game {
     constructor() {
         this.commands = [];
 
-        if(!game){
+        if (!game) {
             game = this;
         }
 
         gameObjects = [];
         player = new GameObject("hero", 27);
         gameObjects.push(player);
-        initMap();
+    }
+
+    private loop() {
+        window.requestAnimationFrame(() => this.loop())
+        if (needUpdate) {
+            this.executeCommands();
+            this.update();
+            needUpdate = false;
+        }
+    }
+
+    private executeCommands() {
+        while (this.commands.length > 0) {
+            let command = <Command>this.commands.pop();
+            switch (command.type) {
+                case 'Move':
+                    let coord = <point>command.args.pop();
+                    let cellContent = map[coord.y][coord.x].content
+                    for (let content of cellContent) {
+                        if (content.attributes.indexOf('obstacle') >= 0) {
+                            break;
+                        }
+                        if (content.attributes.indexOf('pickable') >= 0) {
+                            command.obj.inventory.push(content);
+                            cellContent.splice(cellContent.indexOf(content, 1));
+                            gameObjects.splice(cellContent.indexOf(content, 1));
+                        }
+                        if (content.attributes.indexOf('interactable') >= 0) {
+                            content.interact(command.obj);
+                        }
+                    }
+                    command.obj.coordinate = coord;
+                    break;
+            }
+        }
+    }
+
+    addObject(gameObject: GameObject) {
+        gameObjects.push(gameObject);
+
+        let coord = <point>gameObject.coordinate;
+        map[coord.x][coord.y].content.push(gameObject);
+    }
+
+    addCommand(command: Command) {
+        this.commands.push(command);
     }
 
     mapRect(x: number, y: number, w: number, h: number): number[][] {
         let m: number[][] = [];
-        for(let i = 0; i < h; i++){
+        for (let i = 0; i < h; i++) {
             m[i] = [];
-            for(let j = 0; j < w; j++){
+            for (let j = 0; j < w; j++) {
                 m[i][j] = map[i + y][j + x].tileID;
             }
         }
@@ -85,54 +136,17 @@ export class Game {
     // Empty function for overriding
     update() { }
 
-    forceUpdate(){
+    forceUpdate() {
         needUpdate = true;
     }
 
-    loop(){
-        window.requestAnimationFrame(() => this.loop())
-        if (needUpdate){
-            this.executeCommands();
-            this.update();
-            needUpdate = false;
-        }
-    }
+    // start() {
+    //     needUpdate = true;
+    //     this.loop()
+    // }
 
-    addObject(gameObject: GameObject){
-        gameObjects.push(gameObject);
-
-        let coord = <point>gameObject.coordinate;
-        map[coord.x][coord.y].content.push(gameObject);
-    }
-
-    addCommand(command: Command){
-        this.commands.push(command);
-    }
-
-    private executeCommands(){
-        while(this.commands.length > 0){
-            let command = <Command>this.commands.pop();
-            switch(command.type){
-                case 'Move':
-                    let coord = <point>command.args.pop();
-                    let cellContent = map[coord.y][coord.x].content
-                    for(let content of cellContent){
-                        if(content.attributes.indexOf('obstacle') >= 0){
-                            break;
-                        }
-                        if(content.attributes.indexOf('pickable') >= 0){
-                            command.obj.inventory.push(content);
-                            cellContent.splice(cellContent.indexOf(content, 1));
-                            gameObjects.splice(cellContent.indexOf(content, 1));
-                        }
-                        if(content.attributes.indexOf('interactable') >= 0){
-                            content.interact(command.obj);
-                        }
-                    }
-                    command.obj.coordinate = coord;
-                    break;
-            }
-        }
+    initMap(map: Cell[][]) {
+        map = map;
     }
 }
 
@@ -156,29 +170,59 @@ export class Controller {
                 player.move(1, 0);
                 break; ``
         }
-        needUpdate = true;
+        // needUpdate = true;
+        this.update();
+    }
+
+    //Function ready to override.
+    update() { }
+}
+
+export class GameData {
+    constructor() {
+
+    }
+
+    loadMap(): Cell[][] {
+        map = [];
+
+        fetchAsset("data/map.json");
+        fetchAsset("data/objects.json")
+
+        let mapData: any = {};
+        let objects: any = {};
+
+        for (let r = 0; r < mapData["tiles"].length; r++) {
+            map[r] = [];
+            let row = mapData["tiles"][r];
+            for (let i = 0; i < row.length; i++) {
+                map[r][i] = new Cell(row[i]);
+            }
+        }
+
+        for (let o of objects["objects"]) {
+            map[o.coord.y][o.coord.x].content.push(
+                new GameObject(o, o.tileID, o.coord, o["attributes"])
+            )
+        }
+
+        return map;
     }
 }
 
-function initMap() {
-    map = [];
-    let mapTileIDs = [
-        [52, 5, 0, 0, 0, 0, 6, 0, 0, 50],
-        [52, 5, 0, 0, 0, 0, 6, 0, 0, 50],
-        [52, 0, 6, 0, 0, 5, 0, 0, 5, 50],
-        [52, 0, 0, 0, 0, 0, 0, 0, 6, 50],
-        [52, 6, 0, 5, 0, 6, 0, 0, 0, 50],
-        [52, 0, 6, 0, 5, 0, 6, 0, 0, 50],
-        [52, 0, 5, 0, 6, 0, 5, 6, 0, 50],
-        [52, 0, 0, 5, 0, 0, 0, 0, 5, 50],
-        [52, 0, 0, 0, 6, 0, 0, 6, 0, 50],
-        [146, 19, 19, 19, 19, 19, 19, 19, 19, 147]
-    ];
-    for(let r = 0; r < mapTileIDs.length; r++){
-        map[r] = [];
-        let row = mapTileIDs[r];
-        for(let i = 0; i < row.length; i++){
-            map[r][i] = new Cell(row[i]);
-        }
-    }
+function fetchAsset(path: string, callback: (data: any) => void){
+    let type = path.split('//')[0];
+
+    fetch(`assets/${path}`).then(function(response){
+        response.text().then(function(text){
+            callback(text);
+        });
+    });
+}
+
+
+function loadAssets(){
+    fetchAsset("data/maps.json", function(data){maps = data;});
+    let objects = fetchAsset("data/objects.json");
+    let tileset = fetchAsset("tileset/monochrome.png");
 }
