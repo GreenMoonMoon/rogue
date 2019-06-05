@@ -7,6 +7,8 @@ let player: GameObject;
 let map: Cell[][];
 let needUpdate = false;
 let maps: Map[];
+let objects: {};
+let tileset: ImageData;
 
 interface Command {
     type: string;
@@ -186,8 +188,8 @@ export class GameData {
     loadMap(): Cell[][] {
         map = [];
 
-        fetchAsset("data/map.json");
-        fetchAsset("data/objects.json")
+        fetchAsset("data/map.json", (data) => { });
+        fetchAsset("data/objects.json", (data) => { })
 
         let mapData: any = {};
         let objects: any = {};
@@ -210,19 +212,23 @@ export class GameData {
     }
 }
 
-function fetchAsset(path: string, callback: (data: any) => void){
-    let type = path.split('//')[0];
-
-    fetch(`assets/${path}`).then(function(response){
-        response.text().then(function(text){
-            callback(text);
+function fetchAsset(path: string): Promise {
+    return fetch(`assets/${path}`)
+        .then(function (response) {
+            response.text().then(function (text) {
+                console.log(text);
+            });
         });
-    });
 }
 
+export function loadAssets() {
+    fetchAsset("data/maps.json", function (data) { maps = data; });
+    fetchAsset("data/objects.json", function (data) { objects = data; });
+    fetchAsset("tilesheet/monochrome.png", function (data) { tileset = data });
+}
 
-function loadAssets(){
-    fetchAsset("data/maps.json", function(data){maps = data;});
-    let objects = fetchAsset("data/objects.json");
-    let tileset = fetchAsset("tileset/monochrome.png");
+class Ressources {
+    constructor() {
+
+    }
 }
