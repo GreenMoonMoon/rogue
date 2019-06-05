@@ -221,14 +221,12 @@ function fetchAsset(path: string): Promise {
         });
 }
 
-export function loadAssets() {
-    fetchAsset("data/maps.json", function (data) { maps = data; });
-    fetchAsset("data/objects.json", function (data) { objects = data; });
-    fetchAsset("tilesheet/monochrome.png", function (data) { tileset = data });
-}
-
 class Ressources {
-    constructor() {
+    tilesets: any;
+    maps: any;
+    objects: any
+    constructor(ressources?: string[]) {
+        this.tilesets = {};
 
     }
 }
