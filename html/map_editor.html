@@ -1,12 +1,70 @@
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Map Editor</title>
+    <style>
+        /* #viewport-canvas {} */
+        body {
+            background-color: #472d3c
+        }
+
+        input {
+            color: #472d3c;
+            background-color: #cfc6b8;
+            border: none;
+        }
+
+        .tab {
+            border: solid #cfc6b8;
+            padding: 2px;
+            background-color: #472d3c;
+            color: #cfc6b8;
+            font: .8em "Helvetica";
+            margin-top: 2px;
+        }
+
+        #tools {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 300px;
+        }
+    </style>
 </head>
+
 <body>
     <div id="content">
+        <div id="viewport">
+            <canvas id="viewport-canvas"></canvas>
+        </div>
+        <div id="tools">
+            <div id="attribute" class="tab">
+                <form action="">
+                    Width <input type="number" name="map-width" id="map-width"> <br>
+                    Height <input type="number" name="map-height" id="map-height"> <br>
+                    Name <input type="text" name="map-name" id="map-name"> <br>
+                    <input type="button" value="new" class="attribute-btn">
+                    <input type="button" value="load" class="attribute-btn">
+                    <input type="button" value="save" class="attribute-btn">
+                </form>
+            </div>
+            <div id="palette" class="tab"></div>
+            <div id="tile_selector" class="tab">
 
+            </div>
+        </div>
     </div>
+    <script type="module">
+        import { Viewport } from "viewport_2d.js";
+
+        let canvas = document.getElementById("viewport-canvas");
+        let viewport = new Viewport(canvas);
+
+        let map = {};
+        viewport.dislay(map);
+    </script>
 </body>
+
 </html>
