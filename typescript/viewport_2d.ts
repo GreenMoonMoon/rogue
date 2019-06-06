@@ -21,24 +21,14 @@ export class Viewport {
             for (let x = 0; x < MAP_SIZE; x++) {
                 let indexY = (y > 0) ? Math.floor(map[y][x] / 32) : 0;
                 let indexX = map[y][x] % 32;
-                this.context.drawImage(
-                    this.tileset,
-                    indexX * 17,
-                    indexY * 17,
-                    16,
-                    16,
-                    x * 32,
-                    y * 32,
-                    32,
-                    32
-                );
+                this.context.drawImage(this.tileset, indexX * 17, indexY * 17, 16, 16, x * 32, y * 32, 32, 32);
             }
         }
     }
 }
 
 function loadTileset(name: string): HTMLImageElement {
-    let url = `assets/tilesheet/${name}.png`;
+    let url = `../assets/tilesheet/${name}.png`;
 
     let tileset = new Image();
     tileset.src = url;

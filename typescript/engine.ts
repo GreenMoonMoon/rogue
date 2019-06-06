@@ -188,8 +188,8 @@ export class GameData {
     loadMap(): Cell[][] {
         map = [];
 
-        fetchAsset("data/map.json", (data) => { });
-        fetchAsset("data/objects.json", (data) => { })
+        fetchAsset("data/map.json");
+        fetchAsset("data/objects.json");
 
         let mapData: any = {};
         let objects: any = {};
@@ -212,13 +212,11 @@ export class GameData {
     }
 }
 
-function fetchAsset(path: string): Promise {
-    return fetch(`assets/${path}`)
-        .then(function (response) {
-            response.text().then(function (text) {
-                console.log(text);
-            });
-        });
+async function fetchAsset(path: string): Promise<any> {
+    const response = await fetch(`assets/${path}`);
+    response.text().then(function (text) {
+        console.log(text);
+    });
 }
 
 class Ressources {
