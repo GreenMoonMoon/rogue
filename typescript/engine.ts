@@ -181,50 +181,57 @@ export class Controller {
 }
 
 export class GameData {
-    constructor() {
+    ressource: Ressources;
+    map: any;
 
+    constructor() {
+        this.ressource = new Ressources();
+        this.map = null
     }
 
     loadMap(): Cell[][] {
-        map = [];
+        let mapJson = this.ressource.loadJson("data/map.json");
+        mapJson.then((data: string) => {
+            let mapData: any = eval(data);
 
-        fetchAsset("data/map.json");
-        fetchAsset("data/objects.json");
-
-        let mapData: any = {};
-        let objects: any = {};
-
-        for (let r = 0; r < mapData["tiles"].length; r++) {
-            map[r] = [];
-            let row = mapData["tiles"][r];
-            for (let i = 0; i < row.length; i++) {
-                map[r][i] = new Cell(row[i]);
+            for (let r = 0; r < mapData["tiles"].length; r++) {
+                this.map[r] = [];
+                let row = mapData["tiles"][r];
+                for (let i = 0; i < row.length; i++) {
+                    this.map[r][i] = new Cell(row[i]);
+                }
             }
-        }
+        });
 
-        for (let o of objects["objects"]) {
-            map[o.coord.y][o.coord.x].content.push(
-                new GameObject(o, o.tileID, o.coord, o["attributes"])
-            )
-        }
+        let objectsJson = this.ressource.loadJson("data/objects.json");
+        objectsJson.then(function (data: string) {
+            let objectsData: any = eval(data);
+            for (let o of objectsData["objects"]) {
+                map[o.coord.y][o.coord.x].content.push(
+                    new GameObject(o, o.tileID, o.coord, o["attributes"])
+                )
+            }
+        });
 
         return map;
     }
 }
 
-async function fetchAsset(path: string): Promise<any> {
-    const response = await fetch(`assets/${path}`);
-    response.text().then(function (text) {
-        console.log(text);
-    });
-}
-
-class Ressources {
+export class Ressources {
     tilesets: any;
     maps: any;
     objects: any
     constructor(ressources?: string[]) {
         this.tilesets = {};
+    }
 
+    async loadTileset(tilesetName: string): Promise<Blob> {
+        const response = await fetch(`../assets/tilesheet/${tilesetName}.png`);
+        return response.blob();
+    }
+
+    async loadJson(JsonName: string): Promise<string> {
+        const response = await fetch(`../assets/data/${JsonName}.json`);
+        return response.json();
     }
 }
