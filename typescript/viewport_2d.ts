@@ -1,20 +1,32 @@
 
 const MAP_SIZE = 10;
-const ROW_SIZE = 32;
+const DEFAULT_TILESIZE = 16;
 
 export class Viewport {
     canvas: HTMLCanvasElement;
     context: CanvasRenderingContext2D;
     tileset: ImageBitmap | null;
+    tilesize: number;
 
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
-        this.canvas.width = 320;
-        this.canvas.height = 320;
         this.context = <CanvasRenderingContext2D>canvas.getContext("2d");
         this.context.imageSmoothingEnabled = false;
         
+        this.tilesize = 0;
+        this.update(10, 10, DEFAULT_TILESIZE);
         this.tileset = null;
+    }
+
+    update(xTiles: number, yTiles: number, tilesize: number){
+        this.tilesize = tilesize;
+        let width = xTiles * tilesize;
+        let height = yTiles * tilesize;
+        this.canvas.width = width;
+        this.canvas.height = height;
+
+        this.canvas.style.width = width.toString();
+        this.canvas.style.height = height.toString();
     }
 
     draw(map: number[][]) {
@@ -27,5 +39,9 @@ export class Viewport {
                 this.context.drawImage(this.tileset, indexX * 17, indexY * 17, 16, 16, x * 32, y * 32, 32, 32);
             }
         }
+    }
+
+    clear(){
+        this.context.clearRect(0, 0, MAP_SIZE * DEFAULT_TILESIZE, MAP_SIZE * DEFAULT_TILESIZE)
     }
 }
