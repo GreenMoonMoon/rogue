@@ -11,6 +11,9 @@ let penTile = 1;
 
 let map: number[][];
 let viewport: Viewport;
+let tilesContext: CanvasRenderingContext2D;
+let selectedTileContext: CanvasRenderingContext2D;
+
 
 function createMap(width: number, height: number): number[][] {
     let map: number[][] = [];
@@ -30,6 +33,20 @@ function onResize() {
     viewport.update(w, h, TILESIZE);
     viewport.clear();
     viewport.draw(map);
+}
+
+function setTileSeletor(image: ImageBitmap) {
+    let selectedTileCanvas = <HTMLCanvasElement>document.getElementById("selected_tile");
+    selectedTileCanvas.width = selectedTileCanvas.height = 32;
+    selectedTileCanvas.style.width = selectedTileCanvas.style.height = "32"
+    selectedTileContext = <CanvasRenderingContext2D>selectedTileCanvas.getContext("2d");
+    selectedTileContext.imageSmoothingEnabled = false;
+
+    let tilesCanvas = <HTMLCanvasElement>document.getElementById("tiles")
+    tilesContext = <CanvasRenderingContext2D>tilesCanvas.getContext("2d");
+
+    tilesContext.drawImage(image, 0, 0)
+    selectedTileContext.drawImage(image, 32, 32, 16, 16, 0, 0, 32, 32);
 }
 
 function initEditor(event: Event) {
@@ -52,6 +69,7 @@ function initEditor(event: Event) {
 
     let tilesetName = "colored";
 
+
     let ressource = new Ressources();
     let tilesetBlob = ressource.loadTileset(tilesetName);
     tilesetBlob.then(function (blob) {
@@ -59,11 +77,12 @@ function initEditor(event: Event) {
         tilesetBitmap.then(function (image: ImageBitmap) {
             viewport.tileset = image;
             viewport.draw(map);
+            setTileSeletor(image);
         });
     });
 }
 
-function getMapCoordinate(event: MouseEvent): {x: number, y: number} {
+function getMapCoordinate(event: MouseEvent): { x: number, y: number } {
     return { x: Math.floor(event.clientX / (TILESIZE * RATIO)), y: Math.floor(event.clientY / (TILESIZE * RATIO)) };
 }
 
