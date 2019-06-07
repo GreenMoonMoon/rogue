@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Map Editor</title>
     <style>
-        /* #viewport-canvas {} */
         body {
             background-color: #472d3c
         }
@@ -36,6 +35,19 @@
             display: inline-block;
             text-align: center;
         }
+
+        #viewport-canvas {
+            border: solid #cfc6b8 2px;
+        }
+
+        #tiles {
+            overflow: scroll;
+        }
+
+        #selected_tile {
+            border: solid 2px;
+            margin: 10px;
+        }
     </style>
 </head>
 
@@ -57,8 +69,11 @@
             </div>
             <div id="palette" class="tab"></div>
             <div id="tile_selector" class="tab">
-                <canvas id="selected_tile"></canvas><br>
-                <canvas id="tiles"></canvas>
+                <canvas id="selected_tile"></canvas>
+                <input type="number" name="tile-index" id="tile-index"></input><br>
+                <div id="tiles">
+                    <canvas id="tiles-canvas"></canvas>
+                </div>
             </div>
         </div>
     </div>

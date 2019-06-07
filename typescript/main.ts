@@ -2,7 +2,7 @@
 import { Viewport } from "./viewport_2d.js"
 import { Game, Controller, GameData } from "./engine.js";
 
-const viewport = new Viewport(<HTMLCanvasElement>document.getElementById('canvas'));
+const viewport = new Viewport(<HTMLCanvasElement>document.getElementById('canvas'), 16, 16);
 const game = new Game();
 const controller = new Controller();
 const data = new GameData();
