@@ -2,6 +2,7 @@ import { Viewport } from "./viewport_2d.js";
 import { Ressources } from "./engine.js";
 
 const TILESIZE = 16;
+const ROW_WIDTH = 32;
 const RATIO = 2;
 const name = <HTMLInputElement>document.getElementById("map-name");
 const width = <HTMLInputElement>document.getElementById("map-width");
@@ -14,6 +15,7 @@ let map: number[][];
 let viewport: Viewport;
 let tilesContext: CanvasRenderingContext2D;
 let selectedTileContext: CanvasRenderingContext2D;
+let tileset: ImageBitmap;
 
 
 function createMap(width: number, height: number): number[][] {
@@ -77,6 +79,7 @@ function initEditor(event: Event) {
             viewport.tileset = image;
             viewport.draw(map);
             setTileSeletor(image);
+            tileset = image;
         });
     });
 
@@ -98,8 +101,9 @@ function getMapCoordinate(event: MouseEvent): { x: number, y: number } {
     return { x: Math.floor(event.clientX / trueTileSize), y: Math.floor(event.clientY / trueTileSize) };
 }
 
-function getTileCoordinate(event: MouseEvent): { x: number, y: number } {
-    return { x: Math.floor((event.clientX - event.offsetX) / TILESIZE), y: Math.floor((event.clientY - event.offsetY) / TILESIZE) }
+function getTileCoordinate(canvas: HTMLCanvasElement, event: MouseEvent): { x: number, y: number } {
+    let rect = canvas.getBoundingClientRect();
+    return { x: Math.floor((event.clientX - rect.left) / TILESIZE), y: Math.floor((event.clientY - rect.top) / TILESIZE) }
 }
 
 function udpateMap(event: MouseEvent) {
@@ -109,17 +113,20 @@ function udpateMap(event: MouseEvent) {
     printGrid(viewport.context); //NOTE: for debug only.
 }
 
-function updateTileSelector(event: MouseEvent) {
-    let tileCoord = getTileCoordinate(event);
-    let tileIndex = tileCoord.y * TILESIZE + tileCoord.x;
+function updateTileSelector(canvas: HTMLCanvasElement, event: MouseEvent) {
+    let tileCoord = getTileCoordinate(canvas, event);
+    let tileIndex = tileCoord.y * ROW_WIDTH + tileCoord.x;
     tileIndexInput.value = tileIndex.toString();
+    penTile = tileIndex;
 
     tilesContext.fillStyle = "white"
-    tilesContext.strokeRect(tileCoord.x * TILESIZE, tileCoord.y * TILESIZE, TILESIZE, TILESIZE)
+    tilesContext.strokeRect(tileCoord.x * (TILESIZE + 1), tileCoord.y * (TILESIZE + 1), TILESIZE, TILESIZE)
+
+    selectedTileContext.drawImage(tileset, tileCoord.x * (TILESIZE + 1), tileCoord.y * (TILESIZE + 1), TILESIZE, TILESIZE, 0, 0, 32, 32);
 }
 
 function onTileClick(event: MouseEvent) {
-    updateTileSelector(event);
+    updateTileSelector(tilesContext.canvas, event);
 }
 
 function onMouseDown(event: MouseEvent) {
