@@ -1,10 +1,9 @@
 // import { Viewport } from "./viewport_gl.js";
 import { Viewport } from "./viewport_2d.js"
-import { Game, Controller, GameData, Ressources } from "./engine.js";
+import { Game, Ressources } from "./engine.js";
 
-const viewport = new Viewport(<HTMLCanvasElement>document.getElementById('canvas'), 16, 16);
+const viewport = new Viewport(0, <HTMLCanvasElement>document.getElementById('canvas'), 16, 16);
 const game = new Game();
-const controller = new Controller();
 const ressource = new Ressources();
 
 function updateViewport() {

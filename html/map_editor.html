@@ -53,22 +53,26 @@
 
 <body>
     <div id="content">
-        <div id="viewport">
-            <canvas id="viewport-canvas"></canvas>
+        <div id="workspace">
+            <canvas id="workspace-canvas"></canvas>
         </div>
         <div id="tools">
-            <div id="attribute" class="tab">
+            <div id="tools-attribute" class="tab">
                 <form action="">
                     Width <input type="number" name="map-width" id="map-width"> <br>
                     Height <input type="number" name="map-height" id="map-height"> <br>
                     Name <input type="text" name="map-name" id="map-name"> <br>
-                    <input type="button" value="new" class="attribute-btn">
-                    <input type="button" value="load" class="attribute-btn">
-                    <input type="button" value="save" class="attribute-btn">
+                    <input type="button" value="new" class="attribute-btn" id="map-new">
+                    <input type="button" value="load" class="attribute-btn" id="map-load">
+                    <input type="button" value="save" class="attribute-btn" id="map-save">
                 </form>
+                <input type="checkbox" id="map-grid" checked>
+                <label for="map-grid">Display Map Grid</label>
             </div>
-            <div id="palette" class="tab"></div>
-            <div id="tile_selector" class="tab">
+            <div id="-tools-palette" class="tab">
+                <canvas id="palette-canvas"></canvas>
+            </div>
+            <div id="tools-tiles" class="tab">
                 <canvas id="selected_tile"></canvas>
                 <input type="number" name="tile-index" id="tile-index"></input><br>
                 <div id="tiles">

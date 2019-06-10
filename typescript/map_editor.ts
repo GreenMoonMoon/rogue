@@ -16,7 +16,7 @@ let viewport: Viewport;
 let tilesContext: CanvasRenderingContext2D;
 let selectedTileContext: CanvasRenderingContext2D;
 let tileset: ImageBitmap;
-
+let printGridEnabled = true;
 
 function createMap(width: number, height: number): number[][] {
     let map: number[][] = [];
@@ -51,13 +51,19 @@ function setTileSeletor(image: ImageBitmap) {
 
     tilesContext.drawImage(image, 0, 0)
     selectedTileContext.drawImage(image, 32, 32, 16, 16, 0, 0, 32, 32);
-} 
+}
 
 function initEditor(event: Event) {
-    let canvas = <HTMLCanvasElement>document.getElementById("viewport-canvas");
+    let canvas = <HTMLCanvasElement>document.getElementById("workspace-canvas");
     canvas.addEventListener("mousedown", onMouseDown);
     canvas.addEventListener("mouseup", (event: MouseEvent) => onMouseUp(event));
     canvas.addEventListener("mousemove", (event: MouseEvent) => onMouseMove(event));
+    canvas.addEventListener("mouseout", () => { penDown = false });
+
+    let printGridOption = <HTMLInputElement>document.getElementById("map-grid");
+    printGridOption.addEventListener("change", function (event: Event) {
+        printGridEnabled = event.returnValue;
+    })
 
     name.value = "unamed";
     width.value = "10";
@@ -65,7 +71,7 @@ function initEditor(event: Event) {
     height.value = "10";
     height.addEventListener("change", onResize);
 
-    viewport = new Viewport(canvas, 10, 10);
+    viewport = new Viewport(0, canvas, 10, 10);
     viewport.update(10, 10, TILESIZE, RATIO);
     map = createMap(10, 10);
     viewport.draw(map);
@@ -110,7 +116,9 @@ function udpateMap(event: MouseEvent) {
     let mapCoord = getMapCoordinate(event);
     map[mapCoord.y][mapCoord.x] = penTile;
     viewport.draw(map);
-    printGrid(viewport.context); //NOTE: for debug only.
+    if (printGridEnabled) {
+        printGrid(viewport.context); //NOTE: for debug only.
+    }
 }
 
 function updateTileSelector(canvas: HTMLCanvasElement, event: MouseEvent) {

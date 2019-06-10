@@ -9,21 +9,24 @@ export class Viewport {
     ratio: number;
     width: number;
     height: number;
+    id: number;
 
-    constructor(canvas: HTMLCanvasElement, width: number, height: number) {
+    constructor(id: number, canvas: HTMLCanvasElement, width: number, height: number) {
+        this.id = id // This "id" attribute serve to dispatch renderable component. 
         this.canvas = canvas;
+        this.width = width;
+        this.height = height;
+
         this.context = <CanvasRenderingContext2D>canvas.getContext("2d");
         this.context.imageSmoothingEnabled = false;
-        
-        this.update(10, 10, DEFAULT_TILESIZE, DEFAULT_RATIO);
         this.tileset = null;
         this.tilesize = 0;
         this.ratio = 0;
-        this.width = width;
-        this.height = height;
+
+        this.update(width, height, DEFAULT_TILESIZE, DEFAULT_RATIO);
     }
 
-    update(xTiles: number, yTiles: number, tilesize: number, ratio: number){
+    update(xTiles: number, yTiles: number, tilesize: number, ratio: number) {
         this.tilesize = tilesize;
         let width = xTiles * tilesize * ratio;
         let height = yTiles * tilesize * ratio;
@@ -35,8 +38,8 @@ export class Viewport {
     }
 
     draw(map: number[][]) {
-        if(!this.tileset) return;
-        
+        if (!this.tileset) return;
+
         for (let y = 0; y < this.height; y++) {
             for (let x = 0; x < this.width; x++) {
                 let indexY = (y > 0) ? Math.floor(map[y][x] / 32) : 0;
@@ -46,7 +49,7 @@ export class Viewport {
         }
     }
 
-    clear(){
+    clear() {
         this.context.clearRect(0, 0, this.width * DEFAULT_TILESIZE, this.height * DEFAULT_TILESIZE)
     }
 }

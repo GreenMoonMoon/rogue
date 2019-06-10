@@ -180,43 +180,6 @@ export class Controller {
     update() { }
 }
 
-export class GameData {
-    ressource: Ressources;
-    map: any;
-
-    constructor() {
-        this.ressource = new Ressources();
-        this.map = null
-    }
-
-    loadMap(): Cell[][] {
-        let mapJson = this.ressource.loadJson("data/map.json");
-        mapJson.then((data: string) => {
-            let mapData: any = eval(data);
-
-            for (let r = 0; r < mapData["tiles"].length; r++) {
-                this.map[r] = [];
-                let row = mapData["tiles"][r];
-                for (let i = 0; i < row.length; i++) {
-                    this.map[r][i] = new Cell(row[i]);
-                }
-            }
-        });
-
-        let objectsJson = this.ressource.loadJson("data/objects.json");
-        objectsJson.then(function (data: string) {
-            let objectsData: any = eval(data);
-            for (let o of objectsData["objects"]) {
-                map[o.coord.y][o.coord.x].content.push(
-                    new GameObject(o, o.tileID, o.coord, o["attributes"])
-                )
-            }
-        });
-
-        return map;
-    }
-}
-
 export class Ressources {
     tilesets: any;
     maps: any;
@@ -233,5 +196,15 @@ export class Ressources {
     async loadJson(JsonName: string): Promise<string> {
         const response = await fetch(`../assets/data/${JsonName}.json`);
         return response.json();
+    }
+}
+
+export namespace Component {
+    class Input {
+        constructor() { };
+    }
+    class Renderable {
+        // has id to specify which viewport has to render this componenet.
+        constructor() { }
     }
 }
