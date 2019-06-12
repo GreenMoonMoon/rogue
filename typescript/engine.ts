@@ -147,8 +147,20 @@ export class Game {
     //     this.loop()
     // }
 
-    initMap(map: Cell[][]) {
-        map = map;
+    initMap(importedMap: Cell[][]) {
+        map = importedMap;
+    }
+
+    createMap(width: number, height: number) {
+        let newMap: Cell[][] = [];
+        for (let h = 0; h < height; h++) {
+            newMap[h] = [];
+            for (let w = 0; w < width; w++) {
+                newMap[h][w] = new Cell(0);
+            }
+        }
+
+        this.initMap(newMap);
     }
 }
 
