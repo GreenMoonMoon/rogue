@@ -78,7 +78,6 @@ export class Game {
         window.requestAnimationFrame(() => this.loop())
         if (needUpdate) {
             this.executeCommands();
-            this.update();
             needUpdate = false;
         }
     }
@@ -135,17 +134,9 @@ export class Game {
         return m;
     }
 
-    // Empty function for overriding
-    update() { }
-
     forceUpdate() {
         needUpdate = true;
     }
-
-    // start() {
-    //     needUpdate = true;
-    //     this.loop()
-    // }
 
     initMap(importedMap: Cell[][]) {
         map = importedMap;
@@ -165,31 +156,38 @@ export class Game {
 }
 
 export class Controller {
-    constructor(keymap?: {}) {
+    player: any;
+
+    constructor(player: any, keymap?: {}) {
+        this.player = player;
+        if(keymap){
+            this.initKeymap(keymap);
+        }
+
         window.addEventListener("keydown", (event: KeyboardEvent) => this.handleKeyDown(event));
     }
 
-    handleKeyDown(event: KeyboardEvent) {
-        switch (event.keyCode) {
-            case 37:
-                player.move(0, -1);
-                break;
-            case 38:
-                player.move(-1, 0);
-                break;
-            case 39:
-                player.move(0, 1);
-                break;
-            case 40:
-                player.move(1, 0);
-                break; ``
-        }
-        // needUpdate = true;
-        this.update();
+    private initKeymap(keymap: {}){
+        return;
     }
 
-    //Function ready to override.
-    update() { }
+    handleKeyDown(event: KeyboardEvent) {
+        let movement = {x:0, y:0};
+        switch (event.keyCode) {
+            case 37:
+                movement.y = -1;
+                break;
+            case 38:
+                movement.x = -1;
+                break;
+            case 39:
+                movement.y = 1;
+                break;
+            case 40:
+                movement.x = 1;
+                break; ``
+        }
+    }
 }
 
 export class Ressources {
@@ -200,9 +198,11 @@ export class Ressources {
         this.tilesets = {};
     }
 
-    async loadTileset(tilesetName: string): Promise<Blob> {
+    async loadTileset(tilesetName: string): Promise<ImageBitmap> {
         const response = await fetch(`../assets/tilesheet/${tilesetName}.png`);
-        return response.blob();
+        return response.blob().then((blob: Blob) => {
+            return createImageBitmap(blob);
+        });
     }
 
     async loadJson(JsonName: string): Promise<string> {

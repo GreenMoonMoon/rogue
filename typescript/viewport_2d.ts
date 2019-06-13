@@ -6,10 +6,12 @@ export class Viewport {
     context: CanvasRenderingContext2D;
     tileset: ImageBitmap | null;
     tilesize: number;
+    tileScale: number;
     ratio: number;
     width: number;
     height: number;
     id: number;
+    rowWidth: number;
 
     constructor(id: number, canvas: HTMLCanvasElement, width: number, height: number) {
         this.id = id // This "id" attribute serve to dispatch renderable component. 
@@ -21,15 +23,18 @@ export class Viewport {
         this.context.imageSmoothingEnabled = false;
         this.tileset = null;
         this.tilesize = 0;
+        this.tileScale = 0;
         this.ratio = 0;
+        this.rowWidth = 32;
 
         this.update(width, height, DEFAULT_TILESIZE, DEFAULT_RATIO);
     }
 
     update(xTiles: number, yTiles: number, tilesize: number, ratio: number) {
         this.tilesize = tilesize;
-        let width = xTiles * tilesize * ratio;
-        let height = yTiles * tilesize * ratio;
+        this.tileScale = tilesize * ratio
+        let width = xTiles * this.tileScale;
+        let height = yTiles * this.tileScale;
         this.canvas.width = width;
         this.canvas.height = height;
 
@@ -42,14 +47,18 @@ export class Viewport {
 
         for (let y = 0; y < this.height; y++) {
             for (let x = 0; x < this.width; x++) {
-                let indexY = (y > 0) ? Math.floor(map[y][x] / 32) : 0;
-                let indexX = map[y][x] % 32;
-                this.context.drawImage(this.tileset, indexX * 17, indexY * 17, 16, 16, x * 32, y * 32, 32, 32);
+                let indexY = (y > 0) ? Math.floor(map[y][x] / this.rowWidth) : 0;
+                let indexX = map[y][x] % this.rowWidth;
+                this.context.drawImage(this.tileset, indexX * 17, indexY * 17, 16, 16, x * this.tileScale, y * this.tileScale, this.tileScale, this.tileScale);
             }
         }
     }
 
     clear() {
         this.context.clearRect(0, 0, this.width * DEFAULT_TILESIZE, this.height * DEFAULT_TILESIZE)
+    }
+
+    setTileset(tileset: ImageBitmap){
+        this.tileset = tileset;
     }
 }
