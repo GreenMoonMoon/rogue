@@ -9,6 +9,7 @@ async function start(){
     ressources = new Ressources();
     game = new Game();
     viewport = new Viewport(0, <HTMLCanvasElement>document.getElementById("canvas"), 16, 16);
+
     await ressources.loadTileset("colored").then((tilset: ImageBitmap) => {
         viewport.setTileset(tilset);
     })

@@ -1,18 +1,8 @@
 import { point } from "./utils";
 
-let game: Game;
-
-let gameObjects: GameObject[];
-let player: GameObject;
-let map: Cell[][];
-let needUpdate = false;
-let maps: Map[];
-let objects: {};
-let tileset: ImageData;
-
 interface Command {
     type: string;
-    obj: GameObject;
+    obj: Entity;
     args: any[];
 }
 
@@ -24,8 +14,8 @@ interface Map {
 class Cell {
     tileID: number;
     obstacle: boolean;
-    content: GameObject[];
-    constructor(tileID: number = 0, obstacle: boolean = false, content: GameObject[] = []) {
+    content: Entity[];
+    constructor(tileID: number = 0, obstacle: boolean = false, content: Entity[] = []) {
         this.tileID = tileID;
         this.obstacle = obstacle;
         this.content = content;
@@ -36,42 +26,41 @@ class Cell {
 // instance should be viewed as interactive objects that aren't passive 
 // ressources.
 // They have behavior, can move, have inventories of other game objects.
-class GameObject {
+class Entity {
     name: string;
-    tileID: number;
     coordinate: point;
+    inventory: Entity[];
+    private components: IComponent[];
 
-    inventory: GameObject[]
-    attributes: string[] // Simple setup, could be replace with something more scalable and abstract.
-
-    constructor(name: string, tileID: number, coordinate: point = <point>{ x: 0, y: 0 }, inventory: GameObject[] = [], attributes: string[] = []) {
+    constructor(name: string, coordinate: point = <point>{ x: 0, y: 0 }, inventory: Entity[] = []) {
         this.name = name;
-        this.tileID = tileID;
         this.coordinate = coordinate;
         this.inventory = inventory;
-        this.attributes = attributes;
+        this.components = [];
     }
 
-    move(x: number, y: number) {
-        game.addCommand(<Command>{ type: 'Move', obj: this, args: [{ x: this.coordinate.x + x, y: this.coordinate.y + y }] })
+    addComponent(component: IComponent) {
+        this.components.push(component);
     }
-
-    interact(obj: GameObject) { }
 }
 
 export class Game {
-    commands: Command[];
+    private controller: Controller;
+    private objects: Object[];
+    private map: Map;
+    private commands: Command[];
+    private player: Entity;
 
     constructor() {
+        this.controller = new Controller();
+        this.objects = [];
+        this.map = new Map();
         this.commands = [];
 
-        if (!game) {
-            game = this;
-        }
-
-        gameObjects = [];
-        player = new GameObject("hero", 27);
-        gameObjects.push(player);
+        this.player = new Entity("hero", x: 0, y: 0);
+        this.player.addComponent(new Controller());
+        this.player.addComponent(new Graphic(27));
+        this.objects.push(player);
     }
 
     private loop() {
@@ -108,7 +97,7 @@ export class Game {
         }
     }
 
-    addObject(gameObject: GameObject) {
+    addObject(gameObject: Entity) {
         gameObjects.push(gameObject);
 
         let coord = <point>gameObject.coordinate;
@@ -155,41 +144,6 @@ export class Game {
     }
 }
 
-export class Controller {
-    player: any;
-
-    constructor(player: any, keymap?: {}) {
-        this.player = player;
-        if(keymap){
-            this.initKeymap(keymap);
-        }
-
-        window.addEventListener("keydown", (event: KeyboardEvent) => this.handleKeyDown(event));
-    }
-
-    private initKeymap(keymap: {}){
-        return;
-    }
-
-    handleKeyDown(event: KeyboardEvent) {
-        let movement = {x:0, y:0};
-        switch (event.keyCode) {
-            case 37:
-                movement.y = -1;
-                break;
-            case 38:
-                movement.x = -1;
-                break;
-            case 39:
-                movement.y = 1;
-                break;
-            case 40:
-                movement.x = 1;
-                break; ``
-        }
-    }
-}
-
 export class Ressources {
     tilesets: any;
     maps: any;
@@ -211,12 +165,41 @@ export class Ressources {
     }
 }
 
-export namespace Component {
-    class Input {
-        constructor() { };
+interface IComponent {
+
+}
+
+export class Controller implements IComponent {
+    constructor(player: any, keymap?: {}) {
+        if (keymap) {
+            this.initKeymap(keymap);
+        }
+        window.addEventListener("keydown", (event: KeyboardEvent) => this.handleKeyDown(event));
     }
-    class Renderable {
-        // has id to specify which viewport has to render this componenet.
-        constructor() { }
+
+    private initKeymap(keymap: {}) {
+        return;
     }
+
+    handleKeyDown(event: KeyboardEvent) {
+        let movement = { x: 0, y: 0 };
+        switch (event.keyCode) {
+            case 37:
+                movement.y = -1;
+                break;
+            case 38:
+                movement.x = -1;
+                break;
+            case 39:
+                movement.y = 1;
+                break;
+            case 40:
+                movement.x = 1;
+                break;
+        }
+    }
+}
+
+export class Graphic implements IComponent {
+
 }
