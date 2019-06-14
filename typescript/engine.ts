@@ -22,10 +22,7 @@ class Cell {
     }
 }
 
-// GameObject are the basis for all object contained in the game. GameObject
-// instance should be viewed as interactive objects that aren't passive 
-// ressources.
-// They have behavior, can move, have inventories of other game objects.
+// Entities can contain other entities. A tree of entities with the top level being the one shown.
 class Entity {
     name: string;
     coordinate: point;
@@ -45,67 +42,24 @@ class Entity {
 }
 
 export class Game {
-    private controller: Controller;
+    private map: Cell[][];
     private objects: Object[];
-    private map: Map;
-    private commands: Command[];
-    private player: Entity;
 
     constructor() {
-        this.controller = new Controller();
+        this.map = [];
         this.objects = [];
-        this.map = new Map();
-        this.commands = [];
 
-        this.player = new Entity("hero", x: 0, y: 0);
-        this.player.addComponent(new Controller());
-        this.player.addComponent(new Graphic(27));
+        let player = new Entity("hero", <point>{ x: 0, y: 0 });
+        player.addComponent(new Controller());
+        player.addComponent(new Graphic(27));
         this.objects.push(player);
     }
 
-    private loop() {
-        window.requestAnimationFrame(() => this.loop())
-        if (needUpdate) {
-            this.executeCommands();
-            needUpdate = false;
-        }
-    }
-
-    private executeCommands() {
-        while (this.commands.length > 0) {
-            let command = <Command>this.commands.pop();
-            switch (command.type) {
-                case 'Move':
-                    let coord = <point>command.args.pop();
-                    let cellContent = map[coord.y][coord.x].content
-                    for (let content of cellContent) {
-                        if (content.attributes.indexOf('obstacle') >= 0) {
-                            break;
-                        }
-                        if (content.attributes.indexOf('pickable') >= 0) {
-                            command.obj.inventory.push(content);
-                            cellContent.splice(cellContent.indexOf(content, 1));
-                            gameObjects.splice(cellContent.indexOf(content, 1));
-                        }
-                        if (content.attributes.indexOf('interactable') >= 0) {
-                            content.interact(command.obj);
-                        }
-                    }
-                    command.obj.coordinate = coord;
-                    break;
-            }
-        }
-    }
-
     addObject(gameObject: Entity) {
-        gameObjects.push(gameObject);
+        this.objects.push(gameObject);
 
         let coord = <point>gameObject.coordinate;
-        map[coord.x][coord.y].content.push(gameObject);
-    }
-
-    addCommand(command: Command) {
-        this.commands.push(command);
+        this.map[coord.x][coord.y].content.push(gameObject);
     }
 
     mapRect(x: number, y: number, w: number, h: number): number[][] {
@@ -113,22 +67,10 @@ export class Game {
         for (let i = 0; i < h; i++) {
             m[i] = [];
             for (let j = 0; j < w; j++) {
-                m[i][j] = map[i + y][j + x].tileID;
+                m[i][j] = this.map[i + y][j + x].tileID;
             }
         }
-        for (let go of gameObjects) {
-            // NOTES: check if object intersect with mapRect first.
-            m[go.coordinate.x - x][go.coordinate.y - y] = go.tileID;
-        }
         return m;
-    }
-
-    forceUpdate() {
-        needUpdate = true;
-    }
-
-    initMap(importedMap: Cell[][]) {
-        map = importedMap;
     }
 
     createMap(width: number, height: number) {
@@ -136,11 +78,11 @@ export class Game {
         for (let h = 0; h < height; h++) {
             newMap[h] = [];
             for (let w = 0; w < width; w++) {
-                newMap[h][w] = new Cell(0);
+                newMap[h][w] = new Cell(39);
             }
         }
 
-        this.initMap(newMap);
+        this.map = newMap;
     }
 }
 
@@ -165,12 +107,10 @@ export class Ressources {
     }
 }
 
-interface IComponent {
-
-}
+interface IComponent { }
 
 export class Controller implements IComponent {
-    constructor(player: any, keymap?: {}) {
+    constructor(keymap?: {}) {
         if (keymap) {
             this.initKeymap(keymap);
         }
@@ -201,5 +141,8 @@ export class Controller implements IComponent {
 }
 
 export class Graphic implements IComponent {
-
+    tileID: number;
+    constructor(tileID: number) {
+        this.tileID = tileID;
+    }
 }

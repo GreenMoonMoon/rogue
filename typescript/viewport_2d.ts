@@ -1,6 +1,6 @@
 const DEFAULT_TILESIZE = 16;
 const DEFAULT_RATIO = 2;
-
+// https://developer.mozilla.org/en-US/docs/Games/Techniques/Crisp_pixel_art_look
 export class Viewport {
     canvas: HTMLCanvasElement;
     context: CanvasRenderingContext2D;
@@ -47,7 +47,7 @@ export class Viewport {
 
         for (let y = 0; y < this.height; y++) {
             for (let x = 0; x < this.width; x++) {
-                let indexY = (y > 0) ? Math.floor(map[y][x] / this.rowWidth) : 0;
+                let indexY = (y > this.rowWidth) ? Math.floor(map[y][x] / this.rowWidth) : 0;
                 let indexX = map[y][x] % this.rowWidth;
                 this.context.drawImage(this.tileset, indexX * 17, indexY * 17, 16, 16, x * this.tileScale, y * this.tileScale, this.tileScale, this.tileScale);
             }

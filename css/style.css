@@ -4,7 +4,7 @@ body {
 
 .grid-container {
     display: grid;
-    grid-template-columns: 1fr 320px 1fr;
+    grid-template-columns: 1fr auto 1fr;
     grid-template-rows: 1fr 1fr 1fr;
     grid-template-areas: ". viewport-tab ." ". viewport-tab ." ". . .";
 }
@@ -14,10 +14,4 @@ body {
     border-width: 2px;
     border-color: #cfc6b8;
     border-style: solid;
-    width: 320px;
-}
-
-#viewport-canvas {
-    width: 320;
-    height: 320;
 }
