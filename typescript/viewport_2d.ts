@@ -10,7 +10,7 @@ export class Viewport {
     id: number;
     rowWidth: number;
 
-    constructor(id: number, canvas: HTMLCanvasElement, width: number, height: number) {
+    constructor(id: number, canvas: HTMLCanvasElement, width: number, height: number, zoom: number) {
         this.id = id // This "id" attribute serve to dispatch renderable component. 
         this.canvas = canvas;
         this.width = width;
@@ -22,7 +22,7 @@ export class Viewport {
         this.tilesize = DEFAULT_TILESIZE;
         this.rowWidth = 32;
 
-        this.update(width, height, DEFAULT_TILESIZE, 1);
+        this.update(width, height, DEFAULT_TILESIZE, zoom);
     }
 
     update(xTiles: number, yTiles: number, tilesize: number, zoom: number) {
@@ -34,7 +34,7 @@ export class Viewport {
 
         this.canvas.style.width = (width * zoom).toString();
         this.canvas.style.height = (height * zoom).toString();
-        this.canvas.style.setProperty("imageRendering", "pixelated");
+        this.canvas.style.setProperty("image-rendering", "pixelated");
     }
 
     draw(map: number[][]) {

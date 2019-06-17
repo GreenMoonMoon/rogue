@@ -70,7 +70,7 @@ function initEditor(event: Event) {
     height.value = "10";
     height.addEventListener("change", onResize);
 
-    viewport = new Viewport(0, canvas, 10, 10);
+    viewport = new Viewport(0, canvas, 10, 10, 2);
     viewport.update(10, 10, TILESIZE, 2);
     map = createMap(10, 10);
     viewport.draw(map);
