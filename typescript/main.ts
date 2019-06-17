@@ -19,6 +19,7 @@ async function start(){
 }
 
 function loop(delta: number){
+    game.executeCommand();
     viewport.draw(game.displayRect(0, 0, 16, 16));  
     requestAnimationFrame(loop);
 }

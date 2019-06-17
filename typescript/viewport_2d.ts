@@ -1,5 +1,4 @@
 const DEFAULT_TILESIZE = 16;
-// https://developer.mozilla.org/en-US/docs/Games/Techniques/Crisp_pixel_art_look
 export class Viewport {
     canvas: HTMLCanvasElement;
     context: CanvasRenderingContext2D;

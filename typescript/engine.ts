@@ -1,4 +1,4 @@
-import { point, Vector2 } from "./utils";
+import { point, Vector2, addVector2 } from "./utils.js";
 
 interface Command {
     type: string;
@@ -15,8 +15,8 @@ class Map {
     constructor(id: number, cells: Cell[][], width: number, height: number) {
         this.id = id;
         this.cells = cells;
-        this.width = 0;
-        this.height = 0;
+        this.width = width;
+        this.height = height;
     }
 
     canMoveTo(coordinate: point): boolean {
@@ -64,14 +64,14 @@ class Entity {
 }
 
 export class Game {
-    private map: Cell[][];
+    private map: Map | null;
     private entities: Entity[];
     private controllers: Controller[];
     private graphics: Graphic[];
     private commands: ICommand[];
 
     constructor() {
-        this.map = [];
+        this.map = null;
         this.entities = [];
         this.controllers = [];
         this.graphics = [];
@@ -89,9 +89,6 @@ export class Game {
 
     addObject(entity: Entity) {
         this.entities.push(entity);
-
-        let coord = <point>entity.coordinate;
-        this.map[coord.x][coord.y].content.push(entity);
     }
 
     addCommand(command: ICommand) {
@@ -100,10 +97,11 @@ export class Game {
 
     displayRect(x: number, y: number, w: number, h: number): number[][] {
         let m: number[][] = [];
+        let cells = (<Map>this.map).cells;
         for (let i = 0; i < h; i++) {
             m[i] = [];
             for (let j = 0; j < w; j++) {
-                m[i][j] = this.map[i + y][j + x].tileID;
+                m[i][j] = cells[i + y][j + x].tileID;
             }
         }
 
@@ -120,22 +118,23 @@ export class Game {
     }
 
     createMap(width: number, height: number) {
-        let newMap: Cell[][] = [];
+        let cells: Cell[][] = [];
         for (let h = 0; h < height; h++) {
-            newMap[h] = [];
+            cells[h] = [];
             for (let w = 0; w < width; w++) {
-                newMap[h][w] = new Cell(0);
+                cells[h][w] = new Cell(0);
             }
         }
 
-        this.map = newMap;
+        this.map = new Map(0, cells, width, height);
     }
 
     executeCommand() {
-        for (let command of this.commands) {
+        while (this.commands.length) {
+            let command = <ICommand>this.commands.pop();
             switch (command.type) {
                 case "move":
-                    if (this.map.canMoveTo(command.args)) {
+                    if ((<Map>this.map).canMoveTo(addVector2(command.entity.coordinate, command.args))) {
                         command.entity.coordinate.x += (<Vector2>command.args).x;
                         command.entity.coordinate.y += (<Vector2>command.args).y;
                     }
