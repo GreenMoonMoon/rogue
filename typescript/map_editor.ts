@@ -3,7 +3,6 @@ import { Ressources } from "./engine.js";
 
 const TILESIZE = 16;
 const ROW_WIDTH = 32;
-const RATIO = 2;
 const name = <HTMLInputElement>document.getElementById("map-name");
 const width = <HTMLInputElement>document.getElementById("map-width");
 const height = <HTMLInputElement>document.getElementById("map-height");
@@ -33,7 +32,7 @@ function onResize() {
     let w = parseInt(width.value);
     let h = parseInt(height.value);
     map = createMap(w, h);
-    viewport.update(w, h, TILESIZE, RATIO);
+    viewport.update(w, h, TILESIZE, 2);
     viewport.clear();
     viewport.draw(map);
 }
@@ -72,7 +71,7 @@ function initEditor(event: Event) {
     height.addEventListener("change", onResize);
 
     viewport = new Viewport(0, canvas, 10, 10);
-    viewport.update(10, 10, TILESIZE, RATIO);
+    viewport.update(10, 10, TILESIZE, 2);
     map = createMap(10, 10);
     viewport.draw(map);
 
@@ -93,18 +92,16 @@ function initEditor(event: Event) {
 }
 
 function printGrid(ctx: CanvasRenderingContext2D) {
-    let realTileSize = TILESIZE * RATIO;
     ctx.fillStyle = "white";
-    for (let y = 0; y < (10 * realTileSize); y += realTileSize) {
-        for (let x = 0; x < (10 * realTileSize); x += realTileSize) {
-            ctx.strokeRect(x, y, realTileSize, realTileSize);
+    for (let y = 0; y < (10 * TILESIZE); y += TILESIZE) {
+        for (let x = 0; x < (10 * TILESIZE); x += TILESIZE) {
+            ctx.strokeRect(x, y, TILESIZE, TILESIZE);
         }
     }
 }
 
 function getMapCoordinate(event: MouseEvent): { x: number, y: number } {
-    let trueTileSize = TILESIZE * RATIO;
-    return { x: Math.floor(event.clientX / trueTileSize), y: Math.floor(event.clientY / trueTileSize) };
+    return { x: Math.floor(event.clientX / TILESIZE), y: Math.floor(event.clientY / TILESIZE) };
 }
 
 function getTileCoordinate(canvas: HTMLCanvasElement, event: MouseEvent): { x: number, y: number } {

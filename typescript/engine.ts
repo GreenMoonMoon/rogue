@@ -78,7 +78,7 @@ export class Game {
         for (let h = 0; h < height; h++) {
             newMap[h] = [];
             for (let w = 0; w < width; w++) {
-                newMap[h][w] = new Cell(39);
+                newMap[h][w] = new Cell(38);
             }
         }
 
