@@ -82,9 +82,9 @@ export class Game {
 
     addEntity(entity: Entity) {
         entity.game = this;
-        if(entity.components.length){
-            for(let component of entity.components ){
-                switch(true){
+        if (entity.components.length) {
+            for (let component of entity.components) {
+                switch (true) {
                     case (component instanceof Controller):
                         this.controllers.push(<Controller>component);
                         break;
@@ -123,12 +123,14 @@ export class Game {
         return m;
     }
 
-    createMap(width: number, height: number) {
+    createMap(tiles: number[][]) {
         let cells: Cell[][] = [];
+        let height = tiles.length;
+        let width = tiles[1].length;
         for (let h = 0; h < height; h++) {
             cells[h] = [];
             for (let w = 0; w < width; w++) {
-                cells[h][w] = new Cell(0);
+                cells[h][w] = new Cell(tiles[h][w]);
             }
         }
 
@@ -165,10 +167,16 @@ export class Ressources {
         });
     }
 
-    async loadJson(JsonName: string): Promise<string> {
+    async loadJSONdata(JsonName: string): Promise<string> {
         const response = await fetch(`../assets/data/${JsonName}.json`);
-        return response.json();
+        return response.json().then((jsonData: any) => {
+            return jsonData;
+        });
     }
+}
+
+export function loadMap(game: Game, jsonData: any) {
+    game.createMap(jsonData.testMap.tiles);
 }
 
 interface ICommand {

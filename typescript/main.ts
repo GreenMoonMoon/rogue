@@ -1,5 +1,5 @@
 import { Viewport } from "./viewport_2d.js"
-import { Game, Ressources, Entity, Controller, Graphic } from "./engine.js";
+import { Game, Ressources, Entity, Controller, Graphic, loadMap } from "./engine.js";
 import { point } from "./utils.js"
 
 let ressources: Ressources;
@@ -11,11 +11,13 @@ async function start() {
     game = new Game();
     viewport = new Viewport(0, <HTMLCanvasElement>document.getElementById("canvas"), 16, 16, 2);
 
-    await ressources.loadTileset("colored").then((tilset: ImageBitmap) => {
-        viewport.setTileset(tilset);
+    await ressources.loadTileset("colored").then((tileset: ImageBitmap) => {
+        viewport.setTileset(tileset);
     })
 
-    game.createMap(25, 25);
+    await ressources.loadJSONdata("maps").then((jsonData: any) => {
+        loadMap(game, jsonData);
+    })
     fillMap();
 
     loop(0);
@@ -23,7 +25,7 @@ async function start() {
 
 function loop(delta: number) {
     game.executeCommand();
-    viewport.draw(game.displayRect(0, 0, 16, 16));
+    viewport.draw(game.displayRect(0, 0, 10, 10));
     requestAnimationFrame(loop);
 }
 
@@ -35,8 +37,8 @@ function fillMap() {
 
     let gold = new Entity("gold");
     gold.addComponent(new Graphic(841));
-    
-    let chest = new Entity("chest", <point>{x: 4, y: 6}, [gold]);
+
+    let chest = new Entity("chest", <point>{ x: 4, y: 6 }, [gold]);
     chest.zIndex = 100;
     chest.addComponent(new Graphic(200));
     game.addEntity(chest);
