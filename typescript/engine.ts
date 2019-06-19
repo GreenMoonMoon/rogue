@@ -1,27 +1,37 @@
 import { point, Vector2, addVector2 } from "./utils.js";
 
+const CHUNK_SIZE = 16;
+
 interface Command {
     type: string;
     obj: Entity;
     args: any[];
 }
 
+// type chunk = {
+//     cells: Cell[][];
+// };
+
+type chunk = Cell[][];
+
 class Map {
     id: number;
-    cells: Cell[][];
+    chunks: chunk[];
     width: number;
-    height: number
+    height: number;
 
-    constructor(id: number, cells: Cell[][], width: number, height: number) {
+    constructor(id: number, width?: number, chunks?: chunk[]) {
         this.id = id;
-        this.cells = cells;
-        this.width = width;
-        this.height = height;
+        this.chunks = chunks ? chunks : [];
+        this.width = width ? width : 0;
+        this.height = width ? (this.chunks.length / this.width) : 0;
     }
 
     canMoveTo(coordinate: point): boolean {
-        if (coordinate.x < 0 || coordinate.x > this.width) return false;
-        if (coordinate.y < 0 || coordinate.y > this.height) return false;
+        let chunkID = Math.floor(coordinate.y / CHUNK_SIZE) * this.width + Math.floor(coordinate.x / CHUNK_SIZE);
+
+        if (coordinate.x < 0 || coordinate.x > (CHUNK_SIZE * this.width)) return false;
+        if (coordinate.y < 0 || coordinate.y > (CHUNK_SIZE * this.height)) return false;
         return true;
     }
 }
@@ -123,18 +133,22 @@ export class Game {
         return m;
     }
 
-    createMap(tiles: number[][]) {
-        let cells: Cell[][] = [];
-        let height = tiles.length;
-        let width = tiles[1].length;
-        for (let h = 0; h < height; h++) {
-            cells[h] = [];
-            for (let w = 0; w < width; w++) {
-                cells[h][w] = new Cell(tiles[h][w]);
+    createMap(tiles: number[][][], width: number) {
+        let chunks: chunk[] = [];
+
+        for (let chuckTiles of tiles) {
+            let cells: Cell[][] = [];
+
+            let height = tiles.length;
+            for (let h = 0; h < height; h++) {
+                cells[h] = [];
+                for (let w = 0; w < width; w++) {
+                    cells[h][w] = new Cell(tiles[h][w]);
+                }
             }
         }
 
-        this.map = new Map(0, cells, width, height);
+        this.map = new Map(0, width, chunks);
     }
 
     executeCommand() {
@@ -176,7 +190,7 @@ export class Ressources {
 }
 
 export function loadMap(game: Game, jsonData: any) {
-    game.createMap(jsonData.testMap.tiles);
+    game.createMap(jsonData.testMap.chunks, jsonData.testMap.width);
 }
 
 interface ICommand {

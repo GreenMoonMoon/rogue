@@ -7,6 +7,7 @@ const name = <HTMLInputElement>document.getElementById("map-name");
 const width = <HTMLInputElement>document.getElementById("map-width");
 const height = <HTMLInputElement>document.getElementById("map-height");
 const tileIndexInput = <HTMLInputElement>document.getElementById("tile-index");
+const output = <HTMLTextAreaElement>document.getElementById("map-output");
 
 let penDown = false;
 let penTile = 1;
@@ -91,6 +92,23 @@ function initEditor(event: Event) {
     printGrid(viewport.context);
 }
 
+function updateTileSelector(canvas: HTMLCanvasElement, event: MouseEvent) {
+    let tileCoord = getTileCoordinate(canvas, event);
+    let tileIndex = tileCoord.y * ROW_WIDTH + tileCoord.x;
+    tileIndexInput.value = tileIndex.toString();
+    penTile = tileIndex;
+
+    tilesContext.fillStyle = "white"
+    tilesContext.strokeRect(tileCoord.x * (TILESIZE + 1), tileCoord.y * (TILESIZE + 1), TILESIZE, TILESIZE)
+
+    selectedTileContext.drawImage(tileset, tileCoord.x * (TILESIZE + 1), tileCoord.y * (TILESIZE + 1), TILESIZE, TILESIZE, 0, 0, 32, 32);
+}
+
+
+function updateEditor(){
+    output.textContent = JSON.stringify({tests: true});
+}
+
 function printGrid(ctx: CanvasRenderingContext2D) {
     ctx.fillStyle = "white";
     for (let y = 0; y < (10 * TILESIZE); y += TILESIZE) {
@@ -116,18 +134,6 @@ function udpateMap(event: MouseEvent) {
     if (printGridEnabled) {
         printGrid(viewport.context); //NOTE: for debug only.
     }
-}
-
-function updateTileSelector(canvas: HTMLCanvasElement, event: MouseEvent) {
-    let tileCoord = getTileCoordinate(canvas, event);
-    let tileIndex = tileCoord.y * ROW_WIDTH + tileCoord.x;
-    tileIndexInput.value = tileIndex.toString();
-    penTile = tileIndex;
-
-    tilesContext.fillStyle = "white"
-    tilesContext.strokeRect(tileCoord.x * (TILESIZE + 1), tileCoord.y * (TILESIZE + 1), TILESIZE, TILESIZE)
-
-    selectedTileContext.drawImage(tileset, tileCoord.x * (TILESIZE + 1), tileCoord.y * (TILESIZE + 1), TILESIZE, TILESIZE, 0, 0, 32, 32);
 }
 
 function onTileClick(event: MouseEvent) {
