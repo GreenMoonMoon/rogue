@@ -38,19 +38,21 @@ class Cell {
 }
 
 // Entities can contain other entities. A tree of entities with the top level being the one shown.
-class Entity {
+export class Entity {
     name: string;
-    game: Game;
+    game: Game | null;
     coordinate: point;
     inventory: Entity[];
-    private components: IComponent[];
+    components: IComponent[];
+    zIndex: number;
 
-    constructor(name: string, game: Game, coordinate: point = <point>{ x: 0, y: 0 }, inventory: Entity[] = []) {
+    constructor(name: string, coordinate: point = <point>{ x: 0, y: 0 }, inventory: Entity[] = []) {
         this.name = name;
-        this.game = game;
+        this.game = null;
         this.coordinate = coordinate;
         this.inventory = inventory;
         this.components = [];
+        this.zIndex = 0;
     }
 
     addComponent(component: IComponent) {
@@ -59,7 +61,7 @@ class Entity {
     }
 
     move(movement: Vector2) {
-        this.game.addCommand(<ICommand>{ type: "move", entity: this, args: movement })
+        (<Game>this.game).addCommand(<ICommand>{ type: "move", entity: this, args: movement })
     }
 }
 
@@ -76,18 +78,22 @@ export class Game {
         this.controllers = [];
         this.graphics = [];
         this.commands = [];
-
-        let player = new Entity("hero", this, <point>{ x: 0, y: 0 });
-        let controller = new Controller()
-        this.controllers.push(controller)
-        player.addComponent(controller);
-        let graphic = new Graphic(27)
-        this.graphics.push(graphic)
-        player.addComponent(graphic);
-        this.entities.push(player);
     }
 
-    addObject(entity: Entity) {
+    addEntity(entity: Entity) {
+        entity.game = this;
+        if(entity.components.length){
+            for(let component of entity.components ){
+                switch(true){
+                    case (component instanceof Controller):
+                        this.controllers.push(<Controller>component);
+                        break;
+                    case (component instanceof Graphic):
+                        this.graphics.push(<Graphic>component);
+                        break;
+                }
+            }
+        }
         this.entities.push(entity);
     }
 
