@@ -1,47 +1,28 @@
 import { Viewport } from "./viewport_2d.js"
-import { Game, Ressources, Entity, Controller, Graphic, loadMap } from "./engine.js";
-import { point } from "./utils.js"
+import { Game, Ressources, Level } from "./engine.js";
 
 let ressources: Ressources;
 let viewport: Viewport;
 let game: Game;
 
-async function start() {
+async function load() {
     ressources = new Ressources();
     game = new Game();
     viewport = new Viewport(0, <HTMLCanvasElement>document.getElementById("canvas"), 16, 16, 2);
+    
+    let tilesetImage = ressources.loadTileset("colored");
+    viewport.setTileset(tilesetImage);
+    
+    
+    let level = new Level();
+    game.setLevel(level);
+    game.newPlayer();
 
-    await ressources.loadTileset("colored").then((tileset: ImageBitmap) => {
-        viewport.setTileset(tileset);
-    })
-
-    await ressources.loadJSONdata("maps").then((jsonData: any) => {
-        loadMap(game, jsonData);
-    })
-    fillMap();
-
-    loop(0);
+    start();
 }
 
-function loop(delta: number) {
-    game.executeCommand();
-    viewport.draw(game.displayRect(0, 0, 10, 10));
-    requestAnimationFrame(loop);
-}
+function start() {
 
-function fillMap() {
-    let player = new Entity("player", <point>{ x: 0, y: 0 });
-    player.addComponent(new Controller());
-    player.addComponent(new Graphic(28));
-    game.addEntity(player);
-
-    let gold = new Entity("gold");
-    gold.addComponent(new Graphic(841));
-
-    let chest = new Entity("chest", <point>{ x: 4, y: 6 }, [gold]);
-    chest.zIndex = 100;
-    chest.addComponent(new Graphic(200));
-    game.addEntity(chest);
 }
 
 window.addEventListener("load", start);

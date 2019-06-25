@@ -2,26 +2,15 @@ import { point, Vector2, addVector2 } from "./utils.js";
 
 const CHUNK_SIZE = 16;
 
-interface Command {
-    type: string;
-    obj: Entity;
-    args: any[];
-}
-
-// type chunk = {
-//     cells: Cell[][];
-// };
-
 type chunk = Cell[][];
 
-class Map {
-    id: number;
+
+export class Level {
     chunks: chunk[];
     width: number;
     height: number;
 
-    constructor(id: number, width?: number, chunks?: chunk[]) {
-        this.id = id;
+    constructor(width?: number, chunks?: chunk[]) {
         this.chunks = chunks ? chunks : [];
         this.width = width ? width : 0;
         this.height = width ? (this.chunks.length / this.width) : 0;
@@ -33,6 +22,10 @@ class Map {
         if (coordinate.x < 0 || coordinate.x > (CHUNK_SIZE * this.width)) return false;
         if (coordinate.y < 0 || coordinate.y > (CHUNK_SIZE * this.height)) return false;
         return true;
+    }
+
+    load(data: any){
+
     }
 }
 
@@ -69,25 +62,19 @@ export class Entity {
         component.entity = this;
         this.components.push(component);
     }
-
-    move(movement: Vector2) {
-        (<Game>this.game).addCommand(<ICommand>{ type: "move", entity: this, args: movement })
-    }
 }
 
 export class Game {
-    private map: Map | null;
+    private map: Level | null;
     private entities: Entity[];
     private controllers: Controller[];
     private graphics: Graphic[];
-    private commands: ICommand[];
 
     constructor() {
         this.map = null;
         this.entities = [];
         this.controllers = [];
         this.graphics = [];
-        this.commands = [];
     }
 
     addEntity(entity: Entity) {
@@ -107,13 +94,9 @@ export class Game {
         this.entities.push(entity);
     }
 
-    addCommand(command: ICommand) {
-        this.commands.push(command);
-    }
-
     displayRect(x: number, y: number, w: number, h: number): number[][] {
         let m: number[][] = [];
-        let cells = (<Map>this.map).cells;
+        let cells = (<Level>this.map).cells;
         for (let i = 0; i < h; i++) {
             m[i] = [];
             for (let j = 0; j < w; j++) {
@@ -148,24 +131,21 @@ export class Game {
             }
         }
 
-        this.map = new Map(0, width, chunks);
+        this.map = new Level(0, width, chunks);
     }
 
-    executeCommand() {
-        while (this.commands.length) {
-            let command = <ICommand>this.commands.pop();
-            switch (command.type) {
-                case "move":
-                    if ((<Map>this.map).canMoveTo(addVector2(command.entity.coordinate, command.args))) {
-                        command.entity.coordinate.x += (<Vector2>command.args).x;
-                        command.entity.coordinate.y += (<Vector2>command.args).y;
-                    }
-                    break;
-            }
-        }
+    loop(delta: number) {
+        requestAnimationFrame(this.loop);
+    }
+
+    setLevel(jsonData: any){
+
+    }
+
+    newPlayer(){
+
     }
 }
-
 export class Ressources {
     tilesets: any;
     maps: any;
@@ -174,29 +154,32 @@ export class Ressources {
         this.tilesets = {};
     }
 
-    async loadTileset(tilesetName: string): Promise<ImageBitmap> {
+    loadTileset(tilesetName: string): ImageBitmap {
         const response = await fetch(`../assets/tilesheet/${tilesetName}.png`);
-        return response.blob().then((blob: Blob) => {
+        const tilesetImage = await response.blob().then((blob: Blob) => {
             return createImageBitmap(blob);
-        });
+        }
+
+        return tilesetImage;
     }
 
-    async loadJSONdata(JsonName: string): Promise<string> {
-        const response = await fetch(`../assets/data/${JsonName}.json`);
-        return response.json().then((jsonData: any) => {
-            return jsonData;
-        });
-    }
-}
 
-export function loadMap(game: Game, jsonData: any) {
-    game.createMap(jsonData.testMap.chunks, jsonData.testMap.width);
-}
+    loadLevel(levelName: String): any {
+                    async loadJSONdata(JsonName: string): Promise<string> {
+                        const response = await fetch(`../assets/data/${JsonName}.json`);
+                        return response.json().then((jsonData: any) => {
+                            return jsonData;
+                        });
+                    }
+                }
+            }
+    // await ressources.loadTileset("colored").then((tileset: ImageBitmap) => {
+    //     viewport.setTileset(tileset);
+    // })
 
-interface ICommand {
-    type: string;
-    entity: Entity;
-    args: any;
+    // await ressources.loadJSONdata("levels").then((jsonData: any) => {
+    //     level.load(jsonData);
+    // })
 }
 
 interface IComponent {
@@ -234,8 +217,6 @@ export class Controller implements IComponent {
                 movement.y = 1;
                 break;
         }
-
-        entity.move(movement);
     }
 }
 
