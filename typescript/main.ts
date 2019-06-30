@@ -7,12 +7,11 @@ let game: Game;
 
 async function load() {
     ressources = new Ressources();
+    ressources.loadTileset("colored");
+    
     game = new Game();
     viewport = new Viewport(0, <HTMLCanvasElement>document.getElementById("canvas"), 16, 16, 2);
-    
-    let tilesetImage = ressources.loadTileset("colored");
-    viewport.setTileset(tilesetImage);
-    
+    viewport.setTileset(ressources.tilesets[0]);
     
     let level = new Level();
     game.setLevel(level);

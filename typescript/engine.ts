@@ -146,40 +146,38 @@ export class Game {
 
     }
 }
+
 export class Ressources {
-    tilesets: any;
-    maps: any;
-    objects: any
+    tilesets: ImageBitmap[];
+    levels: any[];
+    objects: any[];
     constructor(ressources?: string[]) {
-        this.tilesets = {};
+        this.tilesets = [];
+        this.levels = []
+        this.objects = []
     }
 
-    loadTileset(tilesetName: string): ImageBitmap {
-        const response = await fetch(`../assets/tilesheet/${tilesetName}.png`);
-        const tilesetImage = await response.blob().then((blob: Blob) => {
+    loadTileset(tilesetName: string) {
+        let tempImage = createImageBitmap(new Image());
+
+        const promise = fetch(`../assets/tilesheet/${tilesetName}.png`);
+        promise.then(function(response: Response){
+            return response.blob();
+        }).then(function(blob: Blob){
             return createImageBitmap(blob);
-        }
-
-        return tilesetImage;
+        }).then((tilesetImage: ImageBitmap) => {
+            this.tilesets.push(tilesetImage);
+        });
     }
 
-
-    loadLevel(levelName: String): any {
-                    async loadJSONdata(JsonName: string): Promise<string> {
-                        const response = await fetch(`../assets/data/${JsonName}.json`);
-                        return response.json().then((jsonData: any) => {
-                            return jsonData;
-                        });
-                    }
-                }
-            }
-    // await ressources.loadTileset("colored").then((tileset: ImageBitmap) => {
-    //     viewport.setTileset(tileset);
-    // })
-
-    // await ressources.loadJSONdata("levels").then((jsonData: any) => {
-    //     level.load(jsonData);
-    // })
+    loadLevel(levelName: String) {
+        const promise = fetch(`../assets/levels/${levelName}.json`);
+        promise.then(function(response: Response){
+            return response.json();
+        }).then((json: any) => {
+            this.levels.push(json);
+        });
+    }
 }
 
 interface IComponent {
@@ -219,7 +217,6 @@ export class Controller implements IComponent {
         }
     }
 }
-
 export class Graphic implements IComponent {
     entity: Entity | null;
     tileID: number;
