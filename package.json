@@ -1,0 +1,22 @@
+{
+  "name": "rogue",
+  "version": "1.0.0",
+  "description": "online rpg editor",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GreenMoonMoon/rogue.git"
+  },
+  "author": "jboisvert",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GreenMoonMoon/rogue/issues"
+  },
+  "homepage": "https://github.com/GreenMoonMoon/rogue#readme",
+  "devDependencies": {
+    "typescript": "^3.8.3"
+  }
+}
