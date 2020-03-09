@@ -1,29 +1,3 @@
-let VERTEX_SOURCE = `#version 300 es
-precision mediump float;
-in vec4 aVertexPosition;
-
-// uniform mat4 uModelViewMatrix;
-// uniform mat4 uProjectionMatrix;
-
-void main()
-{
-    gl_Position = aVertexPosition;
-}
-`;
-
-let FRAGMENT_SOURCE = `#version 300 es
-precision mediump float;
-uniform vec2 uResolution;
-
-out vec4 outputColor;
-
-void main()
-{
-    vec2 coord = gl_FragCoord.xy \ uResolution;
-    outputColor = vec4(coord, 0.0, 1.0);
-}
-`;
-
 
 interface BufferGroup {
     position: WebGLBuffer | null;
@@ -38,26 +12,25 @@ interface ProgramInfo {
     program: WebGLProgram | null;
 }
 
-
 class GLViewer {
     res: {w: number, h: number};
     gl: WebGL2RenderingContext;
-    buffers: BufferGroup;
+    buffers: BufferGroup | null;
     programInfo: ProgramInfo | null;
 
     constructor(canvas: HTMLCanvasElement) {
         this.res = {w:canvas.width, h:canvas.height};
         this.gl = <WebGL2RenderingContext>canvas.getContext("webgl2");
-        this.programInfo = this.setupContext();
-        this.buffers = this.setupBuffers();
+        this.buffers = null;
+        this.programInfo = null;
     }
 
-    private setupContext(): ProgramInfo | null {
-        let vertexShader = this.loadShader(this.gl.VERTEX_SHADER, VERTEX_SOURCE);
+    private setupContext(vertexSource: string, fragmentSource: string): ProgramInfo | null {
+        let vertexShader = this.loadShader(this.gl.VERTEX_SHADER, vertexSource);
         if(!vertexShader) return null;
         else vertexShader = <WebGLShader>vertexShader;
 
-        let fragmentShader = this.loadShader(this.gl.FRAGMENT_SHADER, FRAGMENT_SOURCE);
+        let fragmentShader = this.loadShader(this.gl.FRAGMENT_SHADER, fragmentSource);
         if(!fragmentShader) return null;
         else fragmentShader = <WebGLShader>fragmentShader;
 
@@ -111,11 +84,27 @@ class GLViewer {
         };
     }
 
-    // drawScene(programInfo, buffers) {
+
+    async initialize(){
+        let vertexRequest = new Request('./assets/glsl/basic.vert');
+        let fragmentRequest = new Request('./assets/glsl/basic.frag');
+
+        Promise.all([fetch(vertexRequest), fetch(fragmentRequest)])
+        .then((responses)=>{
+            return Promise.all([responses[0].text(), responses[1].text()]);
+        })
+        .then((values)=>{
+            this.programInfo = this.setupContext(values[0], values[1]);
+            this.buffers = this.setupBuffers();
+        })
+    }
+
     draw() {
         // Assert this.programInfo is initialysed.
         if (!this.programInfo) return;
         else this.programInfo = <ProgramInfo>this.programInfo;
+        if (!this.buffers) return;
+        else this.buffers = <BufferGroup>this.buffers;
 
         this.gl.clearColor(1.0, 1.0, 1.0, 1.0);
         this.gl.clearDepth(1.0);
@@ -138,7 +127,9 @@ class GLViewer {
 function main() {
     let canvas = <HTMLCanvasElement>document.querySelector("#game-canvas");
     let viewer = new GLViewer(canvas);
-    viewer.draw()
+    viewer.initialize().then(()=>{
+        viewer.draw()
+    })
 }
 
 window.onload = main;
