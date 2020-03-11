@@ -85,18 +85,17 @@ class GLViewer {
     }
 
 
-    async initialize(): Promise<boolean>{
+    async initialize(){
         let vertexRequest = new Request('./assets/glsl/basic.vert');
         let fragmentRequest = new Request('./assets/glsl/basic.frag');
 
-        return Promise.all([fetch(vertexRequest), fetch(fragmentRequest)])
+        await Promise.all([fetch(vertexRequest), fetch(fragmentRequest)])
         .then((responses)=>{
             return Promise.all([responses[0].text(), responses[1].text()]);
         })
         .then((values)=>{
             this.programInfo = this.setupContext(values[0], values[1]);
             this.buffers = this.setupBuffers();
-            return true;
         })
     }
 
@@ -135,7 +134,7 @@ function main() {
     let canvas = <HTMLCanvasElement>document.querySelector("#game-canvas");
     viewer = new GLViewer(canvas, 640, 480);
     let initialisedViewer = viewer.initialize();
-    initialisedViewer.then((response)=>{
+    initialisedViewer.then(()=>{
         viewer.draw();
     })
 }
