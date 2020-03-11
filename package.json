@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/GreenMoonMoon/rogue#readme",
   "devDependencies": {
+    "mocha": "^7.1.0",
     "typescript": "^3.8.3"
   }
 }
