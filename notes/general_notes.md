@@ -13,5 +13,4 @@ Like BOTW, multiple simulated system can interact together like building block e
 Create the game with nothing but the content of the 1-bit tilesheet from kenney.
 A locked 16 color palette.
 
-# Game loop
-Instead of a classic game loop that run as often as it can, let single out the critical event that should trigger an update like: movement, item consuptions? or other such event. Add a event listener that will update the game, call simulation and render the viewport on these event. (Let's try that)
+# Create tools as you make the game
