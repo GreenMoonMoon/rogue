@@ -1,3 +1,4 @@
+import { Viewport, loadShaderSources } from "./viewport_gl2";
 
 interface BufferGroup {
     position: WebGLBuffer | null;
@@ -132,9 +133,16 @@ class GLViewer {
 
 function main() {
     let canvas = <HTMLCanvasElement>document.querySelector("#game-canvas");
-    viewer = new GLViewer(canvas, 640, 480);
-    let initialisedViewer = viewer.initialize();
-    initialisedViewer.then(()=>{
+    // viewer = new GLViewer(canvas, 640, 480);
+    // let initialisedViewer = viewer.initialize();
+    // initialisedViewer.then(()=>{
+    //     viewer.draw();
+    // })
+
+    loadShaderSources('basic', 'basic')
+    .then(function(sources: {vertexSource: string, fragmentSource: string}){
+        let viewer = new Viewport(canvas);
+        viewer.loadProgram(sources);
         viewer.draw();
     })
 }
