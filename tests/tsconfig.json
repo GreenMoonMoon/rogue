@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "module": "CommonJS",
+        "strict": true,
+        "noImplicitAny": true,
+        "removeComments": true,
+        "sourceMap": true,
+        "outDir": "./tests",
+    }
+    // },
+    // "references": [
+    //     {"path": "../src"}
+    // ]
+}

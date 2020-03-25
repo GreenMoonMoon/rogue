@@ -6,8 +6,5 @@
         "removeComments": true,
         "sourceMap": true,
         "outDir": "javascript",
-    },
-    "include": [
-        "typescript/**/*"
-    ]
+    }
 }

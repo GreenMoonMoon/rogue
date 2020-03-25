@@ -131,18 +131,25 @@ class GLViewer {
     }
 }
 
+async function loadTilemap(viewer: any, tilesetSource: string){
+    let tilesetRequest = new Request(`assets/tilesheet/${tilesetSource}.png`)
+    let tileset = new Image();
+    
+    await fetch(tilesetRequest)
+    .then(function(response){
+        return response.blob();
+    })
+    .then(function(blob){
+        tileset.src = URL.createObjectURL(blob);
+        return tileset;
+    })
+}
+
 function main() {
     let canvas = <HTMLCanvasElement>document.querySelector("#game-canvas");
-    // viewer = new GLViewer(canvas, 640, 480);
-    // let initialisedViewer = viewer.initialize();
-    // initialisedViewer.then(()=>{
-    //     viewer.draw();
-    // })
-
-    loadShaderSources('basic', 'basic')
-    .then(function(sources: {vertexSource: string, fragmentSource: string}){
-        let viewer = new Viewport(canvas);
-        viewer.loadProgram(sources);
+    viewer = new GLViewer(canvas, 640, 480);
+    let initialisedViewer = viewer.initialize();
+    initialisedViewer.then(()=>{
         viewer.draw();
     })
 }
