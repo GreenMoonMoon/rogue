@@ -16,20 +16,18 @@ interface ProgramInfo {
 class GLViewer {
     res: {w: number, h: number};
     gl: WebGL2RenderingContext;
-    buffers: BufferGroup | null;
-    programInfo: ProgramInfo | null;
+    shader: string;
 
-    constructor(canvas: HTMLCanvasElement, width: number, height: number) {
+    constructor(canvas: HTMLCanvasElement, width: number, height: number, shader: string = 'basic') {
         this.res = {w:width, h:height};
         this.gl = <WebGL2RenderingContext>canvas.getContext("webgl2");
-        this.buffers = null;
-        this.programInfo = null;
 
         canvas.width = width
-        canvas.style.width = String(width)
+        canvas.style.width = String(width)  
         canvas.height = height
         canvas.style.height = String(height)
         this.gl.viewport(0, 0, width, height);
+        this.shader = shader;
     }
 
     private setupContext(vertexSource: string, fragmentSource: string): ProgramInfo | null {
@@ -85,49 +83,36 @@ class GLViewer {
         };
     }
 
-
-    async initialize(){
+    async initialize(): Promise<any>{
         let vertexRequest = new Request('./assets/glsl/basic.vert');
         let fragmentRequest = new Request('./assets/glsl/basic.frag');
 
-        await Promise.all([fetch(vertexRequest), fetch(fragmentRequest)])
+        return await Promise.all([fetch(vertexRequest), fetch(fragmentRequest)])
         .then((responses)=>{
             return Promise.all([responses[0].text(), responses[1].text()]);
         })
         .then((values)=>{
-            this.programInfo = this.setupContext(values[0], values[1]);
-            this.buffers = this.setupBuffers();
+            return {buffers: this.setupBuffers(), programInfo: this.setupContext(values[0], values[1])};
         })
     }
 
-    draw() {
-        if (!this.programInfo) {
-            throw new Error('programInfo is not initialised!')
-        } else{
-            this.programInfo = <ProgramInfo>this.programInfo;
-        }
-        if (!this.buffers) {
-            throw new Error('buffers is not initialised!')
-        } else {
-            this.buffers = <BufferGroup>this.buffers;
-        }
-
+    draw(buffers: BufferGroup, programInfo: ProgramInfo) {
         this.gl.clearColor(1.0, 1.0, 1.0, 1.0);
         this.gl.clearDepth(1.0);
         this.gl.enable(this.gl.DEPTH_TEST)
         
-        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffers.position);
-        this.gl.vertexAttribPointer(this.programInfo.attribLocations.vertexPosition, 2, this.gl.FLOAT, false, 0, 0);
-        this.gl.enableVertexAttribArray(this.programInfo.attribLocations.vertexPosition)
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buffers.position);
+        this.gl.vertexAttribPointer(programInfo.attribLocations.vertexPosition, 2, this.gl.FLOAT, false, 0, 0);
+        this.gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition)
         
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-        this.gl.useProgram(this.programInfo.program);
+        this.gl.useProgram(programInfo.program);
         
-        this.gl.uniform2f(this.programInfo.attribLocations.resolution, this.res.w, this.res.h);
+        this.gl.uniform2f(programInfo.attribLocations.resolution, this.res.w, this.res.h);
         
         this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4);
 
-        requestAnimationFrame(this.draw)
+        requestAnimationFrame(this.draw(buffers, programInfo))
     }
 }
 
@@ -148,10 +133,6 @@ async function loadTilemap(viewer: any, tilesetSource: string){
 function main() {
     let canvas = <HTMLCanvasElement>document.querySelector("#game-canvas");
     viewer = new GLViewer(canvas, 640, 480);
-    let initialisedViewer = viewer.initialize();
-    initialisedViewer.then(()=>{
-        viewer.draw();
-    })
 }
 
 var viewer: GLViewer;

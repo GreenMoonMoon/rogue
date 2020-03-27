@@ -6,10 +6,9 @@
         "noImplicitAny": true,
         "removeComments": true,
         "sourceMap": true,
-        "outDir": "./tests",
-    }
-    // },
-    // "references": [
-    //     {"path": "../src"}
-    // ]
+        "outDir": "./tests"
+    },
+    "references": [
+        {"path": "../src"}
+    ]
 }

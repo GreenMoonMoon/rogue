@@ -76,19 +76,6 @@ function initEditor(event: Event) {
     map = createMap(10, 10);
     viewport.draw(map);
 
-    let ressource = new Ressources();
-    let tilesetName = "colored";
-    let tilesetBlob = ressource.loadTileset(tilesetName);
-    tilesetBlob.then(function (blob) {
-        let tilesetBitmap = createImageBitmap(blob);
-        tilesetBitmap.then(function (image: ImageBitmap) {
-            viewport.tileset = image;
-            viewport.draw(map);
-            setTileSeletor(image);
-            tileset = image;
-        });
-    });
-
     printGrid(viewport.context);
 }
 

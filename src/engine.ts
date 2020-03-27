@@ -96,7 +96,7 @@ export class Game {
 
     displayRect(x: number, y: number, w: number, h: number): number[][] {
         let m: number[][] = [];
-        let cells = (<Level>this.map).cells;
+        let cells = (<Level>this.map).chunks[0];
         for (let i = 0; i < h; i++) {
             m[i] = [];
             for (let j = 0; j < w; j++) {
@@ -121,17 +121,17 @@ export class Game {
 
         for (let chuckTiles of tiles) {
             let cells: Cell[][] = [];
-
             let height = tiles.length;
+
             for (let h = 0; h < height; h++) {
                 cells[h] = [];
                 for (let w = 0; w < width; w++) {
-                    cells[h][w] = new Cell(tiles[h][w]);
+                    cells[h][w] = new Cell;
                 }
             }
         }
 
-        this.map = new Level(0, width, chunks);
+        this.map = new Level(0, chunks);
     }
 
     loop(delta: number) {

@@ -1,10 +1,11 @@
 {
     "compilerOptions": {
-        "target": "es6",
+        "target": "ES6",
         "strict": true,
         "noImplicitAny": true,
         "removeComments": true,
         "sourceMap": true,
-        "outDir": "javascript",
+        "outDir": "../javascript",
+        "composite": true
     }
 }
