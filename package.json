@@ -16,7 +16,6 @@
     "url": "https://github.com/GreenMoonMoon/rogue/issues"
   },
   "homepage": "https://github.com/GreenMoonMoon/rogue#readme",
-  "devDependencies": {
-    "typescript": "^3.8.3"
-  }
+  "devDependencies": {},
+  "dependencies": {}
 }
