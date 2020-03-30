@@ -18,7 +18,7 @@ function loadTilemap(viewer, tilesetSource) {
 function main() {
     let canvas = document.querySelector("#game-canvas");
 
-    let viewer = new WebGL2Viewer(canvas, 10);
+    const viewer = new WebGL2Viewer(canvas, 10);
     // let shaderSources = loadShaderSources('basic', 'basic');
 
     // shaderSources.then(function (result) {

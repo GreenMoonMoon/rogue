@@ -9,8 +9,12 @@ class WebGL2Viewer {
     }
 
     draw() {
-        //Clear any binding once finished with a vertexArray.
-        this.gl.bindVertexArray(null);
+        this.gl.clearColor(1, 0, 0, 1);
+        this.gl.depthFunc(this.gl.LINEAR);
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+
+        // // Clear any binding once finished with a vertexArray.
+        // gl.bindVertexArray(null);
     }
 }
 
