@@ -1,4 +1,4 @@
-import { WebGL2Viewer, loadShaderSources } from "./engine/viewport_gl2.mjs";
+import { WebGL2Viewer, WebGLDraw } from "./engine/viewport_gl2.mjs";
 
 function loadTilemap(viewer, tilesetSource) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -17,18 +17,11 @@ function loadTilemap(viewer, tilesetSource) {
 
 function main() {
     let canvas = document.querySelector("#game-canvas");
-
-    const viewer = new WebGL2Viewer(canvas, 10);
-    // let shaderSources = loadShaderSources('basic', 'basic');
-
-    // shaderSources.then(function (result) {
-    //     let programInfo = viewer.createProgram(result.vertex, result.fragment);
-    //     let defaultBuffer = viewer.defaultBuffer();
-    //     if (defaultBuffer && programInfo) {
-    //         viewer.draw(defaultBuffer, programInfo);
-    //     }
+    // let viewer = new WebGL2Viewer(canvas, 10);
+    // viewer.loadShaders('basic', 'basic').then(function(){
+    //     viewer.draw();
     // });
-    viewer.draw();
+    WebGLDraw(canvas, 'basic', 'basic');
 }
 
 window.onload = main;
