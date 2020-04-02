@@ -115,6 +115,32 @@ async function WebGLDraw(canvas, vertexName, fragmentName) {
     });
 
     let program = loadProgram(gl, shaderSources.vertex, shaderSources.fragment);
+
+    let tilesheetRequest = new Request(`assets/tilesheet/colored.png`);
+    let tilesheet = await Promise.resolve(fetch(tilesheetRequest))
+    .then(function(response){
+        return response.blob();
+    })
+    .then(function(blob){
+        const url = URL.createObjectURL(blob);
+        let image = new Image();
+        return new Promise((resolve, reject) => {
+            image.onload = () => resolve(image);
+            image.onerror = reject;
+            image.src = url;
+          });
+    });
+    
+    let imageUniformLocation = gl.getUniformLocation(program, 'uTilesheet');
+    let texture = gl.createTexture();
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, tilesheet);
     
     let positionAttributeLocation = gl.getAttribLocation(program, 'aVertexPosition');
     let positionBuffer = gl.createBuffer();
@@ -129,10 +155,12 @@ async function WebGLDraw(canvas, vertexName, fragmentName) {
     ];
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
-    gl.useProgram(program);
-    
     let resolutionUniformLocation = gl.getUniformLocation(program, 'uResolution');
+    
+    gl.useProgram(program);
     gl.uniform2fv(resolutionUniformLocation, [300, 300]);
+
+    gl.uniform1i(imageUniformLocation, 0);
 
     let vao = gl.createVertexArray();
     gl.bindVertexArray(vao);

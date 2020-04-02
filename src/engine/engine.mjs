@@ -176,6 +176,9 @@ class Viewport {
     constructor(viewer) {
         this.viewer = viewer;
     }
+    draw(){
+        
+    }
 }
 
 export { Viewport };
